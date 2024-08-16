@@ -20,7 +20,7 @@ class Fighter:
         self.move_speed = 1500
         self.air_control = 0.4
         
-        self.ground_friction = 0.85
+        self.ground_friction = 0.95
         self.air_friction = 0.95
         
         self.ground_offset = 1 # used to stop jittering
@@ -37,10 +37,6 @@ class Fighter:
             self.velocity.x += self.move_input * self.move_speed * self.air_control * delta_time
 
         self.is_grounded = False
-        
-        # apply gravity
-        if not self.is_grounded:
-            self.velocity += delta_time * pygame.Vector2(0, 800.0)
 
         # collisions
         # platform collision
@@ -61,11 +57,11 @@ class Fighter:
                     self.velocity.x = 0
                 elif (
                     collision_direction.y > 0
-                    or collision_direction.magnitude_squared == 0
+                    or abs(self.collider.bottom() - other_collider.top()) < 10
                 ):
                     # if just touching, then assume it is this case
                     # vertical collision, platform has greater y, platform is below (+y -> below)
-                    self.collider.y = other_collider.top() - self.collider.height - self.ground_offset
+                    self.collider.y = other_collider.top() - self.collider.height + 0.999
                     self.velocity.y = 0
                     self.is_grounded = True
 
@@ -83,16 +79,20 @@ class Fighter:
 
         # apply velocity
         self.collider.move_ip(delta_time * self.velocity)
+        
+        # apply gravity
+        if not self.is_grounded:
+            self.velocity += delta_time * pygame.Vector2(0, 800.0)
 
         # update "children"
         # update attacks and remove those who are finished
         self.attacks = [attack for attack in self.attacks if attack.tick(delta_time)]
 
         # dbg
-        print(f"{delta_time=}")
+        # print(f"{delta_time=}")
         print(f"{self.is_grounded=}")
-        print(f"{self.velocity=}")
-        print(f"{self.collider=}")
+        # print(f"{self.velocity=}")
+        # print(f"{self.collider=}")
 
     def draw(self, surface: pygame.Surface) -> None:
         pygame.draw.rect(
