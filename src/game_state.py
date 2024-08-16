@@ -1,10 +1,12 @@
 import pygame
 from fighter import Fighter
+from platform_entity import Platform
 
 
 class GameState:
     def __init__(self) -> None:
         self.player = Fighter(self)
+        self.platforms = [Platform(self)]
 
     def tick(self, delta_time) -> None:
         """
@@ -23,6 +25,8 @@ class GameState:
 
         # update "children"
         self.player.tick(delta_time)
+        for platform in self.platforms:
+            platform.tick(delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
         """Does NOT update surface"""
@@ -30,3 +34,5 @@ class GameState:
         # draw "children"
         # draw the player as a rectangle
         self.player.draw(surface=surface)
+        for platform in self.platforms:
+            platform.draw(surface=surface)
