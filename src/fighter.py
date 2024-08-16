@@ -9,26 +9,38 @@ class Fighter:
         # TODO: use in-game scale different from pixel scale
         
         self.direction = 1 # -1 is left, 1 is right
+        self.move_input = 0
         self.velocity: pygame.Vector2 = pygame.Vector2()
         self.collider = Collider(0.0, 0.0, 50.0, 100.0)
 
         self.attacks: list[Attack] = []
 
-        self.jump_strength = -150
+        self.jump_strength = -400
         self.is_grounded = False
-        self.horizontal_walk = 0.0
+        self.move_speed = 1500
+        self.air_control = 0.4
+        
+        self.ground_friction = 0.85
+        self.air_friction = 0.95
+        
+        self.ground_offset = 1 # used to stop jittering
 
     def tick(self, delta_time) -> None:
         if self.velocity.x > 0:
             self.direction = 1
         elif self.velocity.x < 0:
             self.direction = -1
-        
-        # apply walk
-        self.velocity.x += self.horizontal_walk
-        self.horizontal_walk = 0.0
+            
+        if self.is_grounded:
+            self.velocity.x += self.move_input * self.move_speed * delta_time
+        else:
+            self.velocity.x += self.move_input * self.move_speed * self.air_control * delta_time
 
         self.is_grounded = False
+        
+        # apply gravity
+        if not self.is_grounded:
+            self.velocity += delta_time * pygame.Vector2(0, 800.0)
 
         # collisions
         # platform collision
@@ -53,23 +65,21 @@ class Fighter:
                 ):
                     # if just touching, then assume it is this case
                     # vertical collision, platform has greater y, platform is below (+y -> below)
-                    self.collider.y = other_collider.top() - self.collider.height
+                    self.collider.y = other_collider.top() - self.collider.height - self.ground_offset
                     self.velocity.y = 0
                     self.is_grounded = True
 
-        # apply gravity
-        if not self.is_grounded:
-            self.velocity += delta_time * pygame.Vector2(0, 300.0)
+        # apply friction
+        if self.is_grounded:
+            self.velocity.x *= self.ground_friction
+        else:
+            self.velocity.x *= self.air_friction
 
         # clamp velocity just to be safe
         if self.velocity.magnitude_squared() > 0.001:
             # clamp breaks when 0 vec
             self.velocity.clamp_magnitude_ip(1000.0)
 
-        # apply horizontal friction
-        self.velocity.x *= 0.9
-        if abs(self.velocity.x) < 0.001:
-            self.velocity.x = 0
 
         # apply velocity
         self.collider.move_ip(delta_time * self.velocity)
@@ -111,12 +121,13 @@ class Fighter:
             attack.draw(surface=surface)
 
     def move_left(self) -> None:
-        self.direction = -1
-        self.horizontal_walk -= 75
+        self.move_input = -1
 
     def move_right(self) -> None:
-        self.direction = 1
-        self.horizontal_walk += 75
+        self.move_input = 1
+    
+    def stop(self) -> None:
+        self.move_input = 0
 
     def jump(self) -> None:
         if self.is_grounded:

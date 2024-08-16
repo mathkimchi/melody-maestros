@@ -19,8 +19,10 @@ class GameState:
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_LEFT] == True:
             self.player.move_left()
-        if pressed_keys[pygame.K_RIGHT] == True:
+        elif pressed_keys[pygame.K_RIGHT] == True:
             self.player.move_right()
+        else:
+            self.player.stop()
         if pressed_keys[pygame.K_UP] == True:
             self.player.jump()
         if pressed_keys[pygame.K_LSHIFT] == True:
