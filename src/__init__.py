@@ -11,6 +11,10 @@ if __name__ == "__main__":  # if this is the file being run
     pygame.init()
     gs = GameState()
     screen = pygame.display.set_mode((540, 540))
+    clock = pygame.time.Clock()
+
+    # NOTE if frame rate too high, then there are rounding errors because dt is integer & too small
+    MAX_FRAME_RATE = 30
 
     while True:
         for event in pygame.event.get():
@@ -31,4 +35,7 @@ if __name__ == "__main__":  # if this is the file being run
 
         # ---
 
-        gs.tick()
+        # in seconds
+        delta_time = clock.tick(MAX_FRAME_RATE) / 1000.0
+
+        gs.tick(delta_time)
