@@ -20,7 +20,7 @@ class Fighter:
         self.move_speed = 1500
         self.air_control = 0.4
         
-        self.ground_friction = 0.95
+        self.ground_friction = 0.8
         self.air_friction = 0.95
         
         self.ground_offset = 1 # used to stop jittering
@@ -42,7 +42,7 @@ class Fighter:
         # platform collision
         for platform in self.gs.platforms:
             other_collider: Collider = platform.collider
-            if self.collider.get_rect().colliderect(other_collider.get_rect()):
+            if self.collider.colliderect(other_collider):
                 collision_direction = get_collision_direction(
                     self.collider, other_collider
                 )
@@ -57,11 +57,11 @@ class Fighter:
                     self.velocity.x = 0
                 elif (
                     collision_direction.y > 0
-                    or abs(self.collider.bottom() - other_collider.top()) < 10
+                    or collision_direction.magnitude_squared == 0
                 ):
                     # if just touching, then assume it is this case
                     # vertical collision, platform has greater y, platform is below (+y -> below)
-                    self.collider.y = other_collider.top() - self.collider.height + 0.999
+                    self.collider.y = other_collider.top() - self.collider.height
                     self.velocity.y = 0
                     self.is_grounded = True
 

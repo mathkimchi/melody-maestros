@@ -34,10 +34,17 @@ class Collider:
     def move_ip(self, move_by: pygame.Vector2):
         self.x += move_by.x
         self.y += move_by.y
+    
+    def colliderect(self, other: 'Collider') -> bool:
+        return (self.x < other.x + other.width and
+                self.x + self.width > other.x and
+                self.y < other.y + other.height and
+                self.y + self.height > other.y)
 
 
 # def collider_from_rect(rect: pygame.Rect) -> Collider:
 #     return Collider(rect.x, rect.y, rect.width, rect.height)
+
 
 
 def get_collision_direction(
