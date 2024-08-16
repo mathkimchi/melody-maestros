@@ -13,17 +13,31 @@ class Collider:
     def get_rect(self) -> pygame.Rect:
         return pygame.Rect(self.x, self.y, self.width, self.height)
 
-    def right(self) -> float:
-        return self.x + self.width
-
     def left(self) -> float:
         return self.x
 
-    def bottom(self) -> float:
-        return self.y + self.width
+    def right(self) -> float:
+        return self.x + self.width
 
     def top(self) -> float:
         return self.y
+
+    def bottom(self) -> float:
+        return self.y + self.height
+
+    def centerx(self) -> float:
+        return self.x + self.width / 2
+
+    def centery(self) -> float:
+        return self.y + self.height / 2
+
+    def move_ip(self, move_by: pygame.Vector2):
+        self.x += move_by.x
+        self.y += move_by.y
+
+
+# def collider_from_rect(rect: pygame.Rect) -> Collider:
+#     return Collider(rect.x, rect.y, rect.width, rect.height)
 
 
 def get_collision_direction(
@@ -38,14 +52,14 @@ def get_collision_direction(
     x_overlap = min(collider.right(), other_collider.right()) - max(
         collider.left(), other_collider.left()
     )
-    y_overlap = min(collider.bottom, other_collider.bottom) - max(
-        collider.top, other_collider.top
+    y_overlap = min(collider.bottom(), other_collider.bottom()) - max(
+        collider.top(), other_collider.top()
     )
 
     # smaller overlap is collision dimension
     if x_overlap < y_overlap:
         # horizontal collision
-        return pygame.Vector2(other_collider.centerx - collider.centerx, 0)
+        return pygame.Vector2(other_collider.centerx() - collider.centerx(), 0)
     else:
         # vertical collision
-        return pygame.Vector2(0, other_collider.centery - collider.centery)
+        return pygame.Vector2(0, other_collider.centery() - collider.centery())

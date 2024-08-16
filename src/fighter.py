@@ -24,18 +24,19 @@ class Fighter:
         # collisions
         # platform collision
         for platform in self.gs.platforms:
-            if self.collider.get_rect().colliderect(platform.collider):
+            other_collider: Collider = platform.collider
+            if self.collider.get_rect().colliderect(other_collider.get_rect()):
                 collision_direction = get_collision_direction(
-                    self.collider.get_rect(), platform.collider
+                    self.collider, other_collider
                 )
                 if collision_direction.x > 0:
                     # horizontal collision, platform is to the right, need to move player to the left st player right = other left
                     # player x + player width = other x
-                    self.collider.x = platform.collider.x - self.collider.width
+                    self.collider.x = other_collider.x - self.collider.width
                     self.velocity.x = 0
                 elif collision_direction.x < 0:
                     # horizontal collision, platform is to the left, need to move player to the right st player left = other right
-                    self.collider.x = platform.collider.right
+                    self.collider.x = other_collider.right()
                     self.velocity.x = 0
                 elif (
                     collision_direction.y > 0
@@ -43,7 +44,7 @@ class Fighter:
                 ):
                     # if just touching, then assume it is this case
                     # vertical collision, platform has greater y, platform is below (+y -> below)
-                    self.collider.y = platform.collider.top - self.collider.height
+                    self.collider.y = other_collider.top() - self.collider.height
                     self.velocity.y = 0
                     should_gravity = False
 
@@ -62,7 +63,7 @@ class Fighter:
             self.velocity.x = 0
 
         # apply velocity
-        self.collider.get_rect().move_ip(delta_time * self.velocity)
+        self.collider.move_ip(delta_time * self.velocity)
 
         # update "children"
         # update attacks and remove those who are finished
