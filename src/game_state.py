@@ -1,11 +1,12 @@
 import pygame
+from fighters.violinist import Violinist
 from fighter import Fighter
 from platform_entity import Platform
 
 
 class GameState:
     def __init__(self) -> None:
-        self.player = Fighter(self)
+        self.player = Violinist(self)
         self.platforms = [Platform(self)]
 
     def tick(self, delta_time) -> None:
@@ -20,6 +21,8 @@ class GameState:
             self.player.move_left()
         if pressed_keys[pygame.K_RIGHT] == True:
             self.player.move_right()
+        if pressed_keys[pygame.K_UP] == True:
+            self.player.jump()
         if pressed_keys[pygame.K_LSHIFT] == True:
             self.player.fast_attack()
 

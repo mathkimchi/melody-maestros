@@ -7,19 +7,28 @@ class Fighter:
     def __init__(self, gs) -> None:
         self.gs = gs  # NOTE: can not type hint game state bc circular import
         # TODO: use in-game scale different from pixel scale
+        
+        self.direction = 1 # -1 is left, 1 is right
         self.velocity: pygame.Vector2 = pygame.Vector2()
         self.collider = Collider(0.0, 0.0, 50.0, 100.0)
 
         self.attacks: list[Attack] = []
 
+        self.jump_strength = -150
+        self.is_grounded = False
         self.horizontal_walk = 0.0
 
     def tick(self, delta_time) -> None:
+        if self.velocity.x > 0:
+            self.direction = 1
+        elif self.velocity.x < 0:
+            self.direction = -1
+        
         # apply walk
         self.velocity.x += self.horizontal_walk
         self.horizontal_walk = 0.0
 
-        should_gravity = True
+        self.is_grounded = False
 
         # collisions
         # platform collision
@@ -46,16 +55,16 @@ class Fighter:
                     # vertical collision, platform has greater y, platform is below (+y -> below)
                     self.collider.y = other_collider.top() - self.collider.height
                     self.velocity.y = 0
-                    should_gravity = False
+                    self.is_grounded = True
 
         # apply gravity
-        if should_gravity:
-            self.velocity += delta_time * pygame.Vector2(0, 10.0)
+        if not self.is_grounded:
+            self.velocity += delta_time * pygame.Vector2(0, 300.0)
 
         # clamp velocity just to be safe
         if self.velocity.magnitude_squared() > 0.001:
             # clamp breaks when 0 vec
-            self.velocity.clamp_magnitude_ip(200.0)
+            self.velocity.clamp_magnitude_ip(1000.0)
 
         # apply horizontal friction
         self.velocity.x *= 0.9
@@ -71,7 +80,7 @@ class Fighter:
 
         # dbg
         print(f"{delta_time=}")
-        print(f"{should_gravity=}")
+        print(f"{self.is_grounded=}")
         print(f"{self.velocity=}")
         print(f"{self.collider=}")
 
@@ -79,25 +88,37 @@ class Fighter:
         pygame.draw.rect(
             surface=surface, color=(255, 0, 0), rect=self.collider.get_rect()
         )
+        
+
+        triangle_base = 20
+        triangle_height = 10
+        if self.direction == 1:
+            points = [
+                (self.collider.right(), self.collider.centery()),
+                (self.collider.right() - triangle_height, self.collider.centery() - triangle_base // 2),
+                (self.collider.right() - triangle_height, self.collider.centery() + triangle_base // 2)
+            ]
+        else: 
+            points = [
+                (self.collider.left(), self.collider.centery()),
+                (self.collider.left() + triangle_height, self.collider.centery() - triangle_base // 2),
+                (self.collider.left() + triangle_height, self.collider.centery() + triangle_base // 2)
+            ]
+        pygame.draw.polygon(surface, (0, 255, 0), points)  # Green triangle
 
         # draw "children"
         for attack in self.attacks:
             attack.draw(surface=surface)
 
     def move_left(self) -> None:
-        self.horizontal_walk -= 100
+        self.direction = -1
+        self.horizontal_walk -= 75
 
     def move_right(self) -> None:
-        self.horizontal_walk += 100
+        self.direction = 1
+        self.horizontal_walk += 75
 
     def jump(self) -> None:
-        pass
-
-    def fast_attack(self) -> None:
-        self.attacks.append(Attack(self))
-
-    def strong_attack(self) -> None:
-        pass
-
-    def block(self) -> None:
-        pass
+        if self.is_grounded:
+            self.velocity.y = self.jump_strength
+            self.is_grounded = False
