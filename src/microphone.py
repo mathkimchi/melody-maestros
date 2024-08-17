@@ -79,7 +79,10 @@ while True:
 
     if combos.matches_combo(combos.held_notes(list(notes)), combos.FAST_ATTACK):
         print("FASTATTACK")
-        break
+
+        import time
+
+        time.sleep(1.0)
 
     fast_attack_match, fast_attack_dist = wgnfsh.match(
         list(notes), fast_attack, const.FAST_ATTACK_MAX_PCT
