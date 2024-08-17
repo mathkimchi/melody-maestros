@@ -1,10 +1,11 @@
 import pygame
-from fighters.violinist import Violinist
-from fighter import Fighter
-from platform_entity import Platform
+from .fighters.violinist import Violinist
+from .platform_entity import Platform
 
 
 class GameState:
+    """Represents all the data relating to a game."""
+
     def __init__(self) -> None:
         self.player = Violinist(self)
         self.platforms = [Platform(self)]

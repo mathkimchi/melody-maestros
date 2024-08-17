@@ -1,5 +1,5 @@
-from fighter import Fighter
-from src.game.attack import Attack
+from ..fighter import Fighter
+from ..attack import Attack
 import pygame
 
 
@@ -19,4 +19,6 @@ class Violinist(Fighter):
         )
 
     def strong_attack(self):
-        self.attacks.append(Attack(self))
+        self.attacks.append(
+            Attack(self, damage=20, duration=0.1, direction=self.direction)
+        )

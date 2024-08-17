@@ -1,14 +1,14 @@
 import pygame
-from attack import Attack
-from collider import Collider, get_collision_direction
+from .attack import Attack
+from .collider import Collider, get_collision_direction
 
 
 class Fighter:
     def __init__(self, gs) -> None:
         self.gs = gs  # NOTE: can not type hint game state bc circular import
         # TODO: use in-game scale different from pixel scale
-        
-        self.direction = 1 # -1 is left, 1 is right
+
+        self.direction = 1  # -1 is left, 1 is right
         self.move_input = 0
         self.velocity: pygame.Vector2 = pygame.Vector2()
         self.collider = Collider(0.0, 0.0, 50.0, 100.0)
@@ -19,22 +19,24 @@ class Fighter:
         self.is_grounded = False
         self.move_speed = 1500
         self.air_control = 0.4
-        
+
         self.ground_friction = 0.8
         self.air_friction = 0.95
-        
-        self.ground_offset = 1 # used to stop jittering
+
+        self.ground_offset = 1  # used to stop jittering
 
     def tick(self, delta_time) -> None:
         if self.velocity.x > 0:
             self.direction = 1
         elif self.velocity.x < 0:
             self.direction = -1
-            
+
         if self.is_grounded:
             self.velocity.x += self.move_input * self.move_speed * delta_time
         else:
-            self.velocity.x += self.move_input * self.move_speed * self.air_control * delta_time
+            self.velocity.x += (
+                self.move_input * self.move_speed * self.air_control * delta_time
+            )
 
         self.is_grounded = False
 
@@ -76,10 +78,9 @@ class Fighter:
             # clamp breaks when 0 vec
             self.velocity.clamp_magnitude_ip(1000.0)
 
-
         # apply velocity
         self.collider.move_ip(delta_time * self.velocity)
-        
+
         # apply gravity
         if not self.is_grounded:
             self.velocity += delta_time * pygame.Vector2(0, 800.0)
@@ -98,21 +99,32 @@ class Fighter:
         pygame.draw.rect(
             surface=surface, color=(255, 0, 0), rect=self.collider.get_rect()
         )
-        
 
         triangle_base = 20
         triangle_height = 10
         if self.direction == 1:
             points = [
                 (self.collider.right(), self.collider.centery()),
-                (self.collider.right() - triangle_height, self.collider.centery() - triangle_base // 2),
-                (self.collider.right() - triangle_height, self.collider.centery() + triangle_base // 2)
+                (
+                    self.collider.right() - triangle_height,
+                    self.collider.centery() - triangle_base // 2,
+                ),
+                (
+                    self.collider.right() - triangle_height,
+                    self.collider.centery() + triangle_base // 2,
+                ),
             ]
-        else: 
+        else:
             points = [
                 (self.collider.left(), self.collider.centery()),
-                (self.collider.left() + triangle_height, self.collider.centery() - triangle_base // 2),
-                (self.collider.left() + triangle_height, self.collider.centery() + triangle_base // 2)
+                (
+                    self.collider.left() + triangle_height,
+                    self.collider.centery() - triangle_base // 2,
+                ),
+                (
+                    self.collider.left() + triangle_height,
+                    self.collider.centery() + triangle_base // 2,
+                ),
             ]
         pygame.draw.polygon(surface, (0, 255, 0), points)  # Green triangle
 
@@ -125,7 +137,7 @@ class Fighter:
 
     def move_right(self) -> None:
         self.move_input = 1
-    
+
     def stop(self) -> None:
         self.move_input = 0
 

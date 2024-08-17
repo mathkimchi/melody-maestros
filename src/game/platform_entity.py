@@ -1,8 +1,10 @@
 import pygame
-from collider import Collider
+from .collider import Collider
 
 
 class Platform:
+    """Immovable and collidable parts of the map."""
+
     def __init__(self, gs) -> None:
         self.gs = gs  # NOTE: can not type hint game state bc circular import
         self.collider = Collider(0.0, 300.0, 300.0, 30.0)
