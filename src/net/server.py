@@ -1,3 +1,4 @@
+import json
 from game.game_state import GameState
 from game.player_actions import PlayerActionSet
 from .client_handler import ClientHandler
@@ -16,13 +17,14 @@ class Server:
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.gs = GameState()
-        self.client_handlers = []
+        self.client_handlers: list[ClientHandler] = []
 
     def run(self) -> None:
         self.serversocket.bind(("localhost", self.port))
 
         if SERVER_SIDE_DISPLAY:
             pygame.init()
+            pygame.display.set_caption("Server View")
             self.screen = pygame.display.set_mode((540, 540))
         self.clock = pygame.time.Clock()
 
@@ -56,6 +58,11 @@ class Server:
 
             self.gs.tick(delta_time)
 
+            # serialize gs and update all clients
+            packet = json.dumps(self.gs.toJsonObj()).encode()
+            for client_handler in self.client_handlers:
+                client_handler.update_client_gs(packet)
+
         # close everything
         self.serversocket.close()
 
@@ -69,6 +76,13 @@ class Server:
             client_handler = ClientHandler(conn, self, 0)
             client_handler_thread = threading.Thread(target=client_handler.run)
             client_handler_thread.start()
+
+            import time
+
+            time.sleep(
+                0.1
+            )  # sometimes client handler sends multiple message when it shouldn't at the start
+
             self.client_handlers.append(client_handler)
 
     def process_packet(self, client_handler: ClientHandler, packet: PlayerActionSet):

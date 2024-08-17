@@ -4,8 +4,8 @@ import pygame
 
 
 class Violinist(Fighter):
-    def __init__(self, gs):
-        super().__init__(gs)
+    def __init__(self, gs, **kwargs):
+        super().__init__(gs, **kwargs)
 
     def tick(self, delta_time):
         super().tick(delta_time)

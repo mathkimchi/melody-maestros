@@ -1,8 +1,15 @@
 import pygame
+import dataclasses
 
 
+@dataclasses.dataclass
 class Collider:
     """Pygame rect only works with ints, which screws physics"""
+
+    x: float
+    y: float
+    width: float
+    height: float
 
     def __init__(self, x, y, width, height) -> None:
         self.x: float = x
@@ -34,17 +41,18 @@ class Collider:
     def move_ip(self, move_by: pygame.Vector2):
         self.x += move_by.x
         self.y += move_by.y
-    
-    def colliderect(self, other: 'Collider') -> bool:
-        return (self.x < other.x + other.width and
-                self.x + self.width > other.x and
-                self.y < other.y + other.height and
-                self.y + self.height > other.y)
+
+    def colliderect(self, other: "Collider") -> bool:
+        return (
+            self.x < other.x + other.width
+            and self.x + self.width > other.x
+            and self.y < other.y + other.height
+            and self.y + self.height > other.y
+        )
 
 
 # def collider_from_rect(rect: pygame.Rect) -> Collider:
 #     return Collider(rect.x, rect.y, rect.width, rect.height)
-
 
 
 def get_collision_direction(

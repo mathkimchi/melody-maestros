@@ -3,29 +3,39 @@ from .attack import Attack
 from .collider import Collider, get_collision_direction
 from abc import ABC, abstractmethod
 from .player_actions import PlayerActionSet
+import dataclasses
+
+JUMP_STRENGTH = -400
+MOVE_SPEED = 1500
+AIR_CONTROL = 0.4
+
+GROUND_FRICTION = 0.8
+AIR_FRICTION = 0.95
 
 
 class Fighter(ABC):
-    def __init__(self, gs) -> None:
+    def __init__(
+        self, gs, direction=1, move_input=0, velocity=None, collider=None, attacks=None
+    ) -> None:
         self.gs = gs  # NOTE: can not type hint game state bc circular import
         # TODO: use in-game scale different from pixel scale
 
-        self.direction = 1  # -1 is left, 1 is right
-        self.move_input = 0
-        self.velocity: pygame.Vector2 = pygame.Vector2()
-        self.collider = Collider(0.0, 0.0, 50.0, 100.0)
+        # set defaults for arguments that are None
+        if velocity == None:
+            velocity = pygame.Vector2()
+        if collider == None:
+            collider = Collider(0.0, 0.0, 50.0, 100.0)
+        if attacks == None:
+            attacks = []
 
-        self.attacks: list[Attack] = []
+        self.direction = direction  # -1 is left, 1 is right
+        self.move_input = move_input
+        self.velocity: pygame.Vector2 = velocity
+        self.collider = collider
 
-        self.jump_strength = -400
+        self.attacks: list[Attack] = attacks
+
         self.is_grounded = False
-        self.move_speed = 1500
-        self.air_control = 0.4
-
-        self.ground_friction = 0.8
-        self.air_friction = 0.95
-
-        self.ground_offset = 1  # used to stop jittering
 
     def tick(self, delta_time) -> None:
         if self.velocity.x > 0:
@@ -34,11 +44,9 @@ class Fighter(ABC):
             self.direction = -1
 
         if self.is_grounded:
-            self.velocity.x += self.move_input * self.move_speed * delta_time
+            self.velocity.x += self.move_input * MOVE_SPEED * delta_time
         else:
-            self.velocity.x += (
-                self.move_input * self.move_speed * self.air_control * delta_time
-            )
+            self.velocity.x += self.move_input * MOVE_SPEED * AIR_CONTROL * delta_time
 
         self.is_grounded = False
 
@@ -71,9 +79,9 @@ class Fighter(ABC):
 
         # apply friction
         if self.is_grounded:
-            self.velocity.x *= self.ground_friction
+            self.velocity.x *= GROUND_FRICTION
         else:
-            self.velocity.x *= self.air_friction
+            self.velocity.x *= AIR_FRICTION
 
         # clamp velocity just to be safe
         if self.velocity.magnitude_squared() > 0.001:
@@ -147,7 +155,7 @@ class Fighter(ABC):
 
     def jump(self) -> None:
         if self.is_grounded:
-            self.velocity.y = self.jump_strength
+            self.velocity.y = JUMP_STRENGTH
             self.is_grounded = False
 
     def do_fast_attack(self):
@@ -163,3 +171,14 @@ class Fighter(ABC):
     @abstractmethod
     def generate_strong_attack(self) -> Attack:
         pass
+
+    def toJsonObj(self) -> dict[str, object]:
+        return {
+            "type": str(type(self)),
+            "direction": self.direction,
+            "move_input": self.move_input,
+            "velocity": (self.velocity.x, self.velocity.y),
+            "collider": dataclasses.asdict(self.collider),
+            "attacks": self.attacks,
+            "is_grounded": self.is_grounded,
+        }

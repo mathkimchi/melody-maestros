@@ -15,13 +15,20 @@ class ClientHandler:
         self.server = server
         self.player_id = player_id
 
-    def run(self) -> None:
         # send initial messages for config
         self.client_socket.sendall(json.dumps(self.player_id).encode())
 
+    def run(self) -> None:
         while True:
             packet = PlayerActionSet(
                 **json.loads(self.client_socket.recv(1024).decode())
             )
 
             self.server.process_packet(self, packet)
+
+    def update_client_gs(self, packet: bytes):
+        """Send an updated version of the game state to the client."""
+        try:
+            self.client_socket.sendall(packet)
+        except BrokenPipeError:
+            pass

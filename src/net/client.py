@@ -14,11 +14,13 @@ class Client:
         self.server_socket.connect(server_address)
         self.player_id: int = json.loads(self.server_socket.recv(1024).decode("utf-8"))
         print(f"Client recieved initial message: {self.player_id}")
-        # # The client GS is just an imitation of the server gs
-        # self.gs = GameState(**json.loads(self.server_socket.recv(1024).decode("utf-8")))
+        # The client GS is just an imitation of the server gs
+        # content at this point doesn't matter, it will be replaced
+        self.gs = GameState()
 
         # initiate display stuff
         pygame.init()
+        pygame.display.set_caption("Client View")
         self.screen = pygame.display.set_mode((540, 540))
         self.clock = pygame.time.Clock()
         self.continue_running = True
@@ -30,16 +32,22 @@ class Client:
                 if event.type == pygame.QUIT:
                     sys.exit()
 
+            # # The client GS is just an imitation of the server gs
+            self.gs.parse_json_in_place(
+                json.loads(self.server_socket.recv(1024).decode("utf-8"))
+            )
+
             # ---
             # Display
 
             # reset display
             self.screen.fill((0, 0, 0))
 
-            # self.gs.draw(surface=self.screen)
+            self.gs.draw(surface=self.screen)
 
             # NOTE changes don't show until this is called
             pygame.display.update()
+            # ---
 
             self.handle_inputs()
 
