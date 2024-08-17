@@ -115,7 +115,7 @@ class Fighter(ABC):
 
         # apply gravity
         if not self.is_grounded:
-            self.velocity += delta_time * pygame.Vector2(0, 800.0)
+            self.velocity += delta_time * pygame.Vector2(0, 1000.0)
 
         # update "children"
         # update attacks and remove those who are finished

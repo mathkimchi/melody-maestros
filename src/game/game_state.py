@@ -16,21 +16,16 @@ class GameState:
         # Main floor
         Platform(self, Collider(0.0, 550.0, 1200.0, 50.0)),
 
-        # Platform 1: Left side, low
-        Platform(self, Collider(100.0, 400.0, 250.0, 20.0)),
+        # Left platform
+        Platform(self, Collider(200.0, 400.0, 250.0, 20.0)),
 
-        # Platform 2: Right side, middle
-        Platform(self, Collider(800.0, 300.0, 300.0, 20.0)),
+        # Right platform
+        Platform(self, Collider(750.0, 400.0, 250.0, 20.0)),
 
-        # Platform 3: Center, high
-        Platform(self, Collider(500.0, 200.0, 200.0, 20.0)),
-
-        # Platform 4: Left side, very high
-        Platform(self, Collider(200.0, 100.0, 150.0, 20.0)),
-
-        # Platform 5: Right side, low
-        Platform(self, Collider(900.0, 450.0, 200.0, 20.0)),
+        # Top center platform
+        Platform(self, Collider(500.0, 250.0, 200.0, 20.0)),
     ]
+
         
         self.game_over = False
         self.winner = None
