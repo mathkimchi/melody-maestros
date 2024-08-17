@@ -58,7 +58,7 @@ class GameState:
                     move_input=obj["move_input"],
                     velocity=pygame.Vector2(obj["velocity"]),
                     collider=Collider(**obj["collider"]),
-                    attacks=obj["attacks"],
+                    attacks= [self.parse_attack_dict(attack) for attack in obj["attacks"]],
                 )
             else:
                 raise
