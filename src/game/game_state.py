@@ -76,7 +76,6 @@ class GameState:
         ]
 
     def parse_attack_dict(self, obj: dict) -> Attack:
-        print(obj["owner_collider"])
         return Attack(
             owner_collider=Collider(
                 obj["owner_collider"]["x"],
