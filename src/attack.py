@@ -2,7 +2,7 @@ import pygame
 
 
 class Attack:
-    def __init__(self, owner, damage: float, duration: float, direction: int, offset: int = 50) -> None:
+    def __init__(self, owner, damage: float, duration: float, direction: int, offset: int = 15) -> None:
         self.owner = owner  # fighter but can't annotate bc circular
         self.damage = damage
         self.direction = direction

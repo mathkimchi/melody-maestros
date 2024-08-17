@@ -26,7 +26,7 @@ if __name__ == "__main__":  # if this is the file being run
         # Display
 
         # reset display
-        screen.fill((0, 0, 0))
+        screen.fill((255, 255, 255))
 
         gs.draw(surface=screen)
 
