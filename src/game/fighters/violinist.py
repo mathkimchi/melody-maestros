@@ -88,6 +88,17 @@ class Violinist(Fighter):
                 flipped_frame = pygame.transform.flip(current_frame, True, False)
                 surface.blit(flipped_frame, (self.collider.x, self.collider.y))
 
+        health_bar_width = 50 
+        health_bar_height = 5 
+        health_bar_y_offset = 10
+        
+        pygame.draw.rect(surface, (0, 255, 0), (self.collider.x, self.collider.y - health_bar_y_offset, health_bar_width, health_bar_height))
+        
+        current_health_length = int((self.health / 100) * health_bar_width)
+        pygame.draw.rect(surface, (0, 255, 0), (self.collider.x, self.collider.y - health_bar_y_offset, current_health_length, health_bar_height))
+        
+        
+
         for attack in self.attacks:
             attack.draw(surface)
 

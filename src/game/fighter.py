@@ -15,9 +15,10 @@ AIR_FRICTION = 0.95
 
 class Fighter(ABC):
     def __init__(
-        self, gs, direction=1, move_input=0, velocity=None, collider=None, attacks=None
+        self, gs, health, direction=1, move_input=0, velocity=None, collider=None, attacks=None
     ) -> None:
         self.gs = gs  # NOTE: can not type hint game state bc circular import
+        self.health = health
         # TODO: use in-game scale different from pixel scale
 
         # set defaults for arguments that are None
@@ -171,6 +172,7 @@ class Fighter(ABC):
     def toJsonObj(self) -> dict[str, object]:
         return {
             "type": str(type(self)),
+            "health": self.health,
             "direction": self.direction,
             "move_input": self.move_input,
             "velocity": (self.velocity.x, self.velocity.y),
