@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from .player_actions import PlayerActionSet
 import dataclasses
 
-JUMP_STRENGTH = -400
+JUMP_STRENGTH = -550
 MOVE_SPEED = 1500
 AIR_CONTROL = 0.4
 
