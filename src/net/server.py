@@ -13,8 +13,8 @@ SERVER_SIDE_DISPLAY = True
 
 
 class Server:
-    def __init__(self, port=8080) -> None:
-        self.port = port
+    def __init__(self, address) -> None:
+        self.address = address
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.gs = GameState()
@@ -23,7 +23,7 @@ class Server:
         self.id_counter = 0
 
     def run(self) -> None:
-        self.serversocket.bind(("", self.port))
+        self.serversocket.bind(self.address)
 
         if SERVER_SIDE_DISPLAY:
             pygame.init()
@@ -78,7 +78,6 @@ class Server:
 
             self.gs.players[self.id_counter] = Violinist(self.gs)
             client_handler = ClientHandler(conn, self, self.id_counter, auto_start=True)
-
 
             self.client_handlers.append(client_handler)
             self.id_counter += 1
