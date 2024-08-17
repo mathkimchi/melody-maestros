@@ -4,6 +4,7 @@ import aubio
 import collections
 import wgnfsh
 import const
+import combos
 
 import os
 
@@ -19,6 +20,8 @@ for note in const.STRONG_ATTACK:
 print(strong_attack)
 
 note_list = list(const.Tone)
+
+
 def find_note(val: float) -> const.Tone:
     lo, hi = 0, len(note_list) - 1
     best_ind = lo
@@ -31,10 +34,11 @@ def find_note(val: float) -> const.Tone:
         else:
             best_ind = mid
             break
-        # check if data[mid] is closer to val than data[best_ind] 
+        # check if data[mid] is closer to val than data[best_ind]
         if abs(note_list[mid].value - val) < abs(note_list[best_ind].value - val):
             best_ind = mid
     return note_list[best_ind]
+
 
 p = pyaudio.PyAudio()
 
@@ -45,16 +49,11 @@ stream = p.open(
     channels=n_channels,
     rate=const.MIC_SAMPLE_RATE,
     input=True,
-    frames_per_buffer=const.MIC_BUFFER_SIZE
+    frames_per_buffer=const.MIC_BUFFER_SIZE,
 )
 
 tolerance = 0.8
-pitch_o = aubio.pitch(
-    "default",
-    8192,
-    const.MIC_BUFFER_SIZE,
-    const.MIC_SAMPLE_RATE
-)
+pitch_o = aubio.pitch("default", 8192, const.MIC_BUFFER_SIZE, const.MIC_SAMPLE_RATE)
 pitch_o.set_unit("midi")
 pitch_o.set_tolerance(tolerance)
 
@@ -68,21 +67,32 @@ while True:
 
     if cur_pitch == const.Tone.LOW or cur_pitch == const.Tone.HIGH:
         notes.append(0)
-    else:    
+    else:
         notes.append(cur_pitch.value)
     notes.popleft()
 
-    print("\r               \r" + str(cur_pitch), end="")
+    print(notes)
+    print(combos.FAST_ATTACK)
+    print(combos.held_notes(list(notes)))
+    print(str(cur_pitch))
     # sys.stdout.flush()
 
-    fast_attack_match, fast_attack_dist = wgnfsh.match(list(notes), fast_attack, const.FAST_ATTACK_MAX_PCT)
+    if combos.matches_combo(combos.held_notes(list(notes)), combos.FAST_ATTACK):
+        print("FASTATTACK")
+        break
+
+    fast_attack_match, fast_attack_dist = wgnfsh.match(
+        list(notes), fast_attack, const.FAST_ATTACK_MAX_PCT
+    )
     if fast_attack_match != -1:
         for _ in range(fast_attack_match):
             notes.pop()
             notes.appendleft(0)
         print(f"\r               \rFast attack, accuracy {fast_attack_dist:.2f}")
 
-    strong_attack_match, strong_attack_dist = wgnfsh.match(list(notes), strong_attack, const.STRONG_ATTACK_MAX_PCT)
+    strong_attack_match, strong_attack_dist = wgnfsh.match(
+        list(notes), strong_attack, const.STRONG_ATTACK_MAX_PCT
+    )
     if strong_attack_match != -1:
         for _ in range(strong_attack_match):
             notes.pop()
