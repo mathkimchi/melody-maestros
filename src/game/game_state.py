@@ -10,7 +10,7 @@ class GameState:
     """Represents all the data relating to a game."""
 
     def __init__(self) -> None:
-        self.players: dict[int, Fighter] = {0: Violinist(self)}
+        self.players: dict[int, Fighter] = {}
         self.platforms = [Platform(self, Collider(0.0, 300.0, 300.0, 30.0))]
 
     def tick(self, delta_time) -> None:

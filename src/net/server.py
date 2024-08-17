@@ -6,6 +6,7 @@ import pygame
 import sys
 import socket
 import threading
+from game.fighters.violinist import Violinist
 
 MAX_FRAME_RATE = 30
 SERVER_SIDE_DISPLAY = True
@@ -18,6 +19,8 @@ class Server:
 
         self.gs = GameState()
         self.client_handlers: list[ClientHandler] = []
+
+        self.id_counter = 0
 
     def run(self) -> None:
         self.serversocket.bind(("localhost", self.port))
@@ -73,7 +76,8 @@ class Server:
 
             print(f"New client from: {addr=}")
 
-            client_handler = ClientHandler(conn, self, 0)
+            self.gs.players[self.id_counter] = Violinist(self.gs)
+            client_handler = ClientHandler(conn, self, self.id_counter)
             client_handler_thread = threading.Thread(target=client_handler.run)
             client_handler_thread.start()
 
@@ -84,6 +88,7 @@ class Server:
             )  # sometimes client handler sends multiple message when it shouldn't at the start
 
             self.client_handlers.append(client_handler)
+            self.id_counter += 1
 
     def process_packet(self, client_handler: ClientHandler, packet: PlayerActionSet):
         """Handles packet from client to server. Currentlym packets are just action sets"""
