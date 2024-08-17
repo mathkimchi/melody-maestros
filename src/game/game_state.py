@@ -13,16 +13,27 @@ class GameState:
     def __init__(self) -> None:
         self.players: dict[int, Fighter] = {}
         self.platforms = [
-
+        # Main floor
         Platform(self, Collider(0.0, 550.0, 1200.0, 50.0)),
 
-        # Central elevated platform
-        Platform(self, Collider(400.0, 350.0, 400.0, 20.0)),
+        # Platform 1: Left side, low
+        Platform(self, Collider(100.0, 400.0, 250.0, 20.0)),
 
-        # Two small floating platforms on either side
-        Platform(self, Collider(100.0, 250.0, 200.0, 20.0)),
-        Platform(self, Collider(900.0, 250.0, 200.0, 20.0)),
+        # Platform 2: Right side, middle
+        Platform(self, Collider(800.0, 300.0, 300.0, 20.0)),
+
+        # Platform 3: Center, high
+        Platform(self, Collider(500.0, 200.0, 200.0, 20.0)),
+
+        # Platform 4: Left side, very high
+        Platform(self, Collider(200.0, 100.0, 150.0, 20.0)),
+
+        # Platform 5: Right side, low
+        Platform(self, Collider(900.0, 450.0, 200.0, 20.0)),
     ]
+        
+        self.game_over = False
+        self.winner = None
 
 
     def tick(self, delta_time) -> None:
@@ -36,6 +47,7 @@ class GameState:
             player.tick(delta_time)
         for platform in self.platforms:
             platform.tick(delta_time)
+            
 
         # print(f"-------------")
         # print(f"{self.__dict__=}")
@@ -107,3 +119,20 @@ class GameState:
                 obj["collider"]["height"],
             ),
         )
+        
+    def check_game_over(self):
+        for player_id, player in self.players.items():
+            if player.health <= 0:
+                self.game_over = True
+                self.winner = 3 - player_id
+                break
+            
+    def reset_game(self):
+        # Reset player positions, health, etc.
+        for player in self.players.values():
+            player.health = 100
+            player.collider.x = player.initial_x
+            player.collider.y = player.initial_y
+        self.game_over = False
+        self.winner = None
+    
