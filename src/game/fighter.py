@@ -15,7 +15,7 @@ AIR_FRICTION = 0.95
 
 class Fighter(ABC):
     def __init__(
-        self, gs, health, direction=1, move_input=0, velocity=None, collider=None, attacks=None
+        self, gs, health=100, direction=1, move_input=0, velocity=None, collider=None, attacks=None
     ) -> None:
         self.gs = gs  # NOTE: can not type hint game state bc circular import
         self.health = health
