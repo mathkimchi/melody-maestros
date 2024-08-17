@@ -49,7 +49,7 @@ class Server:
                 # Display
 
                 # reset display
-                self.screen.fill((0, 0, 0))
+                self.screen.fill((255, 255, 255))
 
                 self.gs.draw(surface=self.screen)
 

@@ -41,7 +41,7 @@ class Client:
             # Display
 
             # reset display
-            self.screen.fill((0, 0, 0))
+            self.screen.fill((255, 255, 255))
 
             self.gs.draw(surface=self.screen)
 
@@ -70,6 +70,8 @@ class Client:
                     action_set.jump = True
                 if clicked_key == pygame.K_LSHIFT:
                     action_set.attack = 1
+                if clicked_key == pygame.K_z:
+                    action_set.attack = 2
 
         # print(f"Sending: {json.dumps(asdict(action_set))=}")
         self.server_socket.sendall((json.dumps(asdict(action_set))+"\n").encode())

@@ -149,9 +149,9 @@ class Fighter(ABC):
             self.jump()
 
         if action_set.attack == 1:
-            self.do_fast_attack()
+            self.fast_attack()
         elif action_set.attack == 2:
-            self.do_fast_attack()
+            self.ranged_attack()
 
     def jump(self) -> None:
         if self.is_grounded:
@@ -160,18 +160,12 @@ class Fighter(ABC):
             self.collider.y -= 0.001 # get it off ground
             self.is_grounded = False
 
-    def do_fast_attack(self):
-        self.attacks.append(self.generate_fast_attack())
-
-    def do_strong_attack(self):
-        self.attacks.append(self.generate_strong_attack())
-
     @abstractmethod
-    def generate_fast_attack(self) -> Attack:
+    def fast_attack(self):
         pass
 
     @abstractmethod
-    def generate_strong_attack(self) -> Attack:
+    def ranged_attack(self):
         pass
 
     def toJsonObj(self) -> dict[str, object]:

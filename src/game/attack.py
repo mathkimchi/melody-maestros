@@ -1,5 +1,5 @@
 import pygame
-from collider import Collider
+from .collider import Collider
 import os
 
 class Attack:
