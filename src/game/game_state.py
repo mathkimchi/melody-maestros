@@ -12,7 +12,25 @@ class GameState:
 
     def __init__(self) -> None:
         self.players: dict[int, Fighter] = {}
-        self.platforms = [Platform(self, Collider(0.0, 300.0, 300.0, 30.0))]
+        self.platforms = [
+            # Floor
+            Platform(self, Collider(0.0, 550.0, 1200.0, 50.0)),
+
+            # Left side platform
+            Platform(self, Collider(100.0, 400.0, 250.0, 20.0)),
+
+            # Right side platform
+            Platform(self, Collider(850.0, 400.0, 250.0, 20.0)),
+
+            # Central platforms
+            Platform(self, Collider(400.0, 250.0, 400.0, 20.0)),
+
+            # Upper left platform
+            Platform(self, Collider(200.0, 150.0, 150.0, 20.0)),
+
+            # Upper right platform
+            Platform(self, Collider(850.0, 150.0, 150.0, 20.0)),
+        ]
 
     def tick(self, delta_time) -> None:
         """

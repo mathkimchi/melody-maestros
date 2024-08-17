@@ -28,7 +28,7 @@ class Server:
         if SERVER_SIDE_DISPLAY:
             pygame.init()
             pygame.display.set_caption("Server View")
-            self.screen = pygame.display.set_mode((540, 540))
+            self.screen = pygame.display.set_mode((1200, 600))
         self.clock = pygame.time.Clock()
 
         self.continue_running = True
