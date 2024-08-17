@@ -15,7 +15,7 @@ AIR_FRICTION = 0.95
 
 class Fighter(ABC):
     def __init__(
-        self, gs, direction=1, move_input=0, velocity=None, collider=None, attacks=None
+        self, gs, player_id: int, direction=1, move_input=0, velocity=None, collider=None, attacks=None
     ) -> None:
         self.gs = gs  # NOTE: can not type hint game state bc circular import
         # TODO: use in-game scale different from pixel scale
@@ -28,6 +28,7 @@ class Fighter(ABC):
         if attacks == None:
             attacks = []
 
+        self.player_id = player_id
         self.direction = direction  # -1 is left, 1 is right
         self.move_input = move_input
         self.velocity: pygame.Vector2 = velocity
@@ -76,6 +77,30 @@ class Fighter(ABC):
                     self.collider.y = other_collider.top() - self.collider.height
                     self.velocity.y = 0
                     self.is_grounded = True
+
+        # other players collision
+        for (other_player_id, other_fighter) in self.gs.player_id.items():
+            if self.player_id == other_player_id:
+                continue
+            
+            other_collider = other_fighter.collider
+            if self.collider.colliderect(other_collider):
+                collision_direction = get_collision_direction(self.collider, other_collider)
+
+                if collision_direction.x > 0:
+                    # horizontal collision, other is to the right, need to move player to the left st player right = other left
+                    # player x + player width = other x
+                    self.collider.x = other_collider.x - self.collider.width
+                    self.velocity.x = min(self.velocity.x, 0)
+                elif collision_direction.x < 0:
+                    # horizontal collision, other is to the left, need to move player to the right st player left = other right
+                    self.collider.x = other_collider.right()
+                    self.velocity.x = max(self.velocity.x, 0)
+                elif collision_direction.y > 0:
+                    # vertical collision, other has greater y, other is below (+y -> below)
+                    self.collider.y = other_collider.top() - self.collider.height
+                    self.velocity.y = 0
+
 
         # apply friction
         if self.is_grounded:
@@ -177,6 +202,7 @@ class Fighter(ABC):
     def toJsonObj(self) -> dict[str, object]:
         return {
             "type": str(type(self)),
+            "player_id": self.player_id,
             "direction": self.direction,
             "move_input": self.move_input,
             "velocity": (self.velocity.x, self.velocity.y),

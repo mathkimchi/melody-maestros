@@ -53,6 +53,7 @@ class GameState:
             if obj["type"] == str(Violinist):
                 return Violinist(
                     gs,
+                    player_id=obj["player_id"],
                     direction=obj["direction"],
                     move_input=obj["move_input"],
                     velocity=pygame.Vector2(obj["velocity"]),
