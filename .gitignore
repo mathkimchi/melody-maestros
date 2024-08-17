@@ -1,5 +1,4 @@
 # tools used for development
 .vscode
-shell.nix
 
 **/__pycache__

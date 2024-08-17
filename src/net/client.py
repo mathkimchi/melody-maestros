@@ -5,6 +5,7 @@ import sys
 import socket
 import json
 from dataclasses import asdict
+from .socket_input_stream import SocketInputStream
 
 
 class Client:
@@ -12,7 +13,8 @@ class Client:
         # initial comminication with client handler
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.connect(server_address)
-        self.player_id: int = json.loads(self.server_socket.recv(1024).decode("utf-8"))
+        self.socket_input_stream = SocketInputStream(self.server_socket, auto_start=True)
+        self.player_id: int = self.socket_input_stream.get_object()
         print(f"Client recieved initial message: {self.player_id}")
         # The client GS is just an imitation of the server gs
         # content at this point doesn't matter, it will be replaced
@@ -33,9 +35,7 @@ class Client:
                     sys.exit()
 
             # # The client GS is just an imitation of the server gs
-            self.gs.parse_json_in_place(
-                json.loads(self.server_socket.recv(1024).decode("utf-8"))
-            )
+            self.gs.parse_json_in_place(self.socket_input_stream.get_object())
 
             # ---
             # Display
@@ -71,4 +71,5 @@ class Client:
                 if clicked_key == pygame.K_LSHIFT:
                     action_set.attack = 1
 
-        self.server_socket.sendall(json.dumps(asdict(action_set)).encode())
+        print(f"Sending: {json.dumps(asdict(action_set))=}")
+        self.server_socket.sendall((json.dumps(asdict(action_set))+"\n").encode())

@@ -23,7 +23,7 @@ class Server:
         self.id_counter = 0
 
     def run(self) -> None:
-        self.serversocket.bind(("localhost", self.port))
+        self.serversocket.bind(("", self.port))
 
         if SERVER_SIDE_DISPLAY:
             pygame.init()
@@ -62,7 +62,7 @@ class Server:
             self.gs.tick(delta_time)
 
             # serialize gs and update all clients
-            packet = json.dumps(self.gs.toJsonObj()).encode()
+            packet = json.dumps(self.gs.toJsonObj())
             for client_handler in self.client_handlers:
                 client_handler.update_client_gs(packet)
 
@@ -77,15 +77,8 @@ class Server:
             print(f"New client from: {addr=}")
 
             self.gs.players[self.id_counter] = Violinist(self.gs)
-            client_handler = ClientHandler(conn, self, self.id_counter)
-            client_handler_thread = threading.Thread(target=client_handler.run)
-            client_handler_thread.start()
+            client_handler = ClientHandler(conn, self, self.id_counter, auto_start=True)
 
-            import time
-
-            time.sleep(
-                0.1
-            )  # sometimes client handler sends multiple message when it shouldn't at the start
 
             self.client_handlers.append(client_handler)
             self.id_counter += 1
