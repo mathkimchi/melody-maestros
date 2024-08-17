@@ -1,6 +1,6 @@
 import pygame
 from collider import Collider
-
+import os
 
 class Attack:
     def __init__(self, owner, damage: float, duration: float, direction: int, offset: int = 15, isRanged: bool = False, velocity: int = 0) -> None:
@@ -23,10 +23,16 @@ class Attack:
         else:
             self.collider : pygame.Rect = pygame.Rect(
                 (self.owner.collider.left() if direction == -1 else self.owner.collider.right()), 
-                self.owner.collider.top() + self.owner.collider.height/2 - 10,
-                10,
-                10,
+                self.owner.collider.top() + self.owner.collider.height/2 - 20,
+                20,
+                20,
             )
+            
+            image_path = "assets/note.png"
+            self.image = pygame.image.load(image_path).convert_alpha()
+            self.image = pygame.transform.scale(self.image, (20, 20))
+
+
 
     def tick(self, delta_time) -> bool:
         movement = self.velocity * self.direction * delta_time
@@ -37,4 +43,5 @@ class Attack:
         return self.time_left > 0
 
     def draw(self, surface: pygame.Surface) -> None:
-        pygame.draw.rect(surface=surface, color=(255, 255, 0), rect=self.collider)
+        if self.isRanged:
+            surface.blit(self.image, self.collider)
