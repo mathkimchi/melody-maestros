@@ -76,7 +76,9 @@ class Server:
 
             print(f"New client from: {addr=}")
 
-            self.gs.players[self.id_counter] = Violinist(self.gs)
+            self.gs.players[self.id_counter] = Violinist(
+                self.gs, player_id=self.id_counter
+            )
             client_handler = ClientHandler(conn, self, self.id_counter, auto_start=True)
 
             self.client_handlers.append(client_handler)
