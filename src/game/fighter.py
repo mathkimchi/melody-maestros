@@ -15,9 +15,19 @@ AIR_FRICTION = 0.95
 
 class Fighter(ABC):
     def __init__(
-        self, gs, direction=1, move_input=0, velocity=None, collider=None, attacks=None
+        self,
+        gs,
+        player_id: int,
+        health=100,
+        direction=1,
+        move_input=0,
+        velocity=None,
+        collider=None,
+        attacks=None,
     ) -> None:
         self.gs = gs  # NOTE: can not type hint game state bc circular import
+        self.player_id = player_id
+        self.health = health
         # TODO: use in-game scale different from pixel scale
 
         # set defaults for arguments that are None
@@ -76,6 +86,17 @@ class Fighter(ABC):
                     self.collider.y = other_collider.top() - self.collider.height
                     self.velocity.y = 0
                     self.is_grounded = True
+
+        # attack collision
+        for other_id, other_player in self.gs.players.items():
+            if self.player_id == other_id:
+                continue
+
+            other_player: Fighter
+
+            for attack in other_player.attacks:
+                if self.collider.colliderect(attack.collider):
+                    self.health -= attack.damage
 
         # apply friction
         if self.is_grounded:
@@ -157,7 +178,7 @@ class Fighter(ABC):
         if self.is_grounded:
             # print("Jumped!")
             self.velocity.y = JUMP_STRENGTH
-            self.collider.y -= 0.001 # get it off ground
+            self.collider.y -= 0.001  # get it off ground
             self.is_grounded = False
 
     @abstractmethod
@@ -171,6 +192,7 @@ class Fighter(ABC):
     def toJsonObj(self) -> dict[str, object]:
         return {
             "type": str(type(self)),
+            "health": self.health,
             "direction": self.direction,
             "move_input": self.move_input,
             "velocity": (self.velocity.x, self.velocity.y),

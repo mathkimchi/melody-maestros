@@ -50,37 +50,50 @@ class GameState:
 
     def parse_json_in_place(self, new: dict):
         # put here bc stupid circular import rules
-        def from_json_obj(obj: dict, gs) -> Fighter:
+        def from_json_obj(obj: dict, gs, id) -> Fighter:
             if obj["type"] == str(Violinist):
                 return Violinist(
                     gs,
+                    player_id=id,
+                    health=obj["health"],
                     direction=obj["direction"],
                     move_input=obj["move_input"],
                     velocity=pygame.Vector2(obj["velocity"]),
                     collider=Collider(**obj["collider"]),
-                    attacks= [self.parse_attack_dict(attack) for attack in obj["attacks"]],
+                    attacks=[
+                        self.parse_attack_dict(attack) for attack in obj["attacks"]
+                    ],
                 )
             else:
                 raise
 
         self.players = {
-            id: from_json_obj(player_dict, self)
+            id: from_json_obj(player_dict, self, id)
             for id, player_dict in new["players"].items()
         }
         self.platforms = [
             Platform(self, Collider(**platform)) for platform in new["platforms"]
         ]
-    
+
     def parse_attack_dict(self, obj: dict) -> Attack:
         print(obj["owner_collider"])
         return Attack(
-            owner_collider = Collider(obj["owner_collider"]["x"], obj["owner_collider"]["y"], obj["owner_collider"]["width"], obj["owner_collider"]["height"]),
-            damage = obj["damage"],
-            duration = obj["time_left"],
-            direction = obj["direction"],
-            offset = obj["offset"],
-            velocity = obj["velocity"],
-            isRanged= obj["isRanged"],
-            collider = Collider(obj["collider"]["x"], obj["collider"]["y"], obj["collider"]["width"], obj["collider"]["height"]),
+            owner_collider=Collider(
+                obj["owner_collider"]["x"],
+                obj["owner_collider"]["y"],
+                obj["owner_collider"]["width"],
+                obj["owner_collider"]["height"],
+            ),
+            damage=obj["damage"],
+            duration=obj["time_left"],
+            direction=obj["direction"],
+            offset=obj["offset"],
+            velocity=obj["velocity"],
+            isRanged=obj["isRanged"],
+            collider=Collider(
+                obj["collider"]["x"],
+                obj["collider"]["y"],
+                obj["collider"]["width"],
+                obj["collider"]["height"],
+            ),
         )
-        
