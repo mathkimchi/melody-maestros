@@ -92,13 +92,13 @@ class Violinist(Fighter):
             attack.draw(surface)
 
     def fast_attack(self):
-        self.attacks.append(Attack(self, damage=10, duration=0.1, direction=self.direction))
+        self.attacks.append(Attack(self.collider, damage=10, duration=0.1, direction=self.direction))
         self.current_animation = 'attack'
         self.current_frame = 0
         self.attack_timer = 0
 
     def ranged_attack(self):
-        self.attacks.append(Attack(self, damage=5, duration=2, direction=self.direction, isRanged=True, velocity=200))
+        self.attacks.append(Attack(self.collider, damage=5, duration=2, direction=self.direction, isRanged=True, velocity=200))
         self.current_animation = 'ranged_attack'
         self.current_frame = 0
         self.attack_timer = 0

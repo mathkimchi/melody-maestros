@@ -1,10 +1,11 @@
 import pygame
 from .collider import Collider
 import os
+import dataclasses
 
 class Attack:
-    def __init__(self, owner, damage: float, duration: float, direction: int, offset: int = 15, isRanged: bool = False, velocity: int = 0) -> None:
-        self.owner = owner  # fighter but can't annotate bc circular
+    def __init__(self, owner_collider, damage: float, duration: float, direction: int, offset: int = 15, isRanged: bool = False, velocity: int = 0) -> None:
+        self.owner_collider = owner_collider  # fighter but can't annotate bc circular
         self.damage = damage
         self.direction = direction
         self.duration = duration
@@ -15,15 +16,15 @@ class Attack:
         
         if not self.isRanged:
             self.collider: pygame.Rect = pygame.Rect(
-                self.owner.collider.left() + direction * offset,
-                self.owner.collider.top(),
-                self.owner.collider.width,
-                self.owner.collider.height,
+                self.owner_collider.left() + direction * offset,
+                self.owner_collider.top(),
+                self.owner_collider.width,
+                self.owner_collider.height,
             )
         else:
             self.collider : pygame.Rect = pygame.Rect(
-                (self.owner.collider.left() if direction == -1 else self.owner.collider.right()), 
-                self.owner.collider.top() + self.owner.collider.height/2 - 20,
+                (self.owner_collider.left() if direction == -1 else self.owner_collider.right()), 
+                self.owner_collider.top() + self.owner_collider.height/2 - 20,
                 20,
                 20,
             )
@@ -45,3 +46,16 @@ class Attack:
     def draw(self, surface: pygame.Surface) -> None:
         if self.isRanged:
             surface.blit(self.image, self.collider)
+    
+    def toJsonObj(self) -> dict:
+        return {
+            "owner_collider": dataclasses.asdict(self.owner_collider),
+            "damage": self.damage,
+            "direction": self.direction,
+            "duration": self.duration,
+            "time_left": self.time_left,
+            "offset": self.offset,
+            "velocity": self.velocity,
+            "isRanged": self.isRanged,
+            "collider": dataclasses.asdict(self.collider),
+        }
