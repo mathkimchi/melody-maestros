@@ -18,4 +18,4 @@ if __name__ == "__main__":  # if this is the file being run
     else:
         port = int(port)
 
-    Server(("localhost", port)).run()
+    Server(("0.0.0.0", port)).run()
