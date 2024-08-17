@@ -175,6 +175,6 @@ class Fighter(ABC):
             "move_input": self.move_input,
             "velocity": (self.velocity.x, self.velocity.y),
             "collider": dataclasses.asdict(self.collider),
-            "attacks": self.attacks,
+            "attacks": [attack.toJsonObj() for attack in self.attacks],
             "is_grounded": self.is_grounded,
         }

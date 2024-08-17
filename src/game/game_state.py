@@ -72,14 +72,15 @@ class GameState:
         ]
     
     def parse_attack_dict(self, obj: dict) -> Attack:
+        print(obj["owner_collider"])
         return Attack(
-            owner_collider = Collider(obj["owner_collider"].x, obj["owner_collider"].y, obj["owner_collider"].width, obj["owner_collider"].height),
+            owner_collider = Collider(obj["owner_collider"]["x"], obj["owner_collider"]["y"], obj["owner_collider"]["width"], obj["owner_collider"]["height"]),
             damage = obj["damage"],
             duration = obj["time_left"],
             direction = obj["direction"],
             offset = obj["offset"],
             velocity = obj["velocity"],
             isRanged= obj["isRanged"],
-            collider = Collider(obj["collider"].x, obj["collider"].y, obj["collider"].width, obj["collider"].height),
+            collider = Collider(obj["collider"]["x"], obj["collider"]["y"], obj["collider"]["width"], obj["collider"]["height"]),
         )
         
