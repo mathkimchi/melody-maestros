@@ -2,4 +2,4 @@
 .vscode
 shell.nix
 
-src/__pycache__
+**/__pycache__
