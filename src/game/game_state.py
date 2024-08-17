@@ -7,7 +7,7 @@ class GameState:
     """Represents all the data relating to a game."""
 
     def __init__(self) -> None:
-        self.player = Violinist(self)
+        self.players = {0: Violinist(self)}
         self.platforms = [Platform(self)]
 
     def tick(self, delta_time) -> None:
@@ -16,21 +16,9 @@ class GameState:
         In other words, does not display.
         """
 
-        # handle inputs
-        pressed_keys = pygame.key.get_pressed()
-        if pressed_keys[pygame.K_LEFT] == True:
-            self.player.move_left()
-        elif pressed_keys[pygame.K_RIGHT] == True:
-            self.player.move_right()
-        else:
-            self.player.stop()
-        if pressed_keys[pygame.K_UP] == True:
-            self.player.jump()
-        if pressed_keys[pygame.K_LSHIFT] == True:
-            self.player.fast_attack()
-
         # update "children"
-        self.player.tick(delta_time)
+        for player in self.players.values():
+            player.tick(delta_time)
         for platform in self.platforms:
             platform.tick(delta_time)
 
@@ -39,6 +27,7 @@ class GameState:
 
         # draw "children"
         # draw the player as a rectangle
-        self.player.draw(surface=surface)
+        for player in self.players.values():
+            player.draw(surface=surface)
         for platform in self.platforms:
             platform.draw(surface=surface)

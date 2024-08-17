@@ -89,9 +89,9 @@ class Fighter:
         # update attacks and remove those who are finished
         self.attacks = [attack for attack in self.attacks if attack.tick(delta_time)]
 
-        # dbg
+        # debug
         # print(f"{delta_time=}")
-        print(f"{self.is_grounded=}")
+        # print(f"{self.is_grounded=}")
         # print(f"{self.velocity=}")
         # print(f"{self.collider=}")
 
