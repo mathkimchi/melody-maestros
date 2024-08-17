@@ -1,34 +1,47 @@
 import pygame
-
+from collider import Collider
+import os
 
 class Attack:
-    """Attack objects are entities that exist while the attack is happening."""
-
-    def __init__(
-        self, owner, damage: float, duration: float, direction: int, offset: int = 50
-    ) -> None:
+    def __init__(self, owner, damage: float, duration: float, direction: int, offset: int = 15, isRanged: bool = False, velocity: int = 0) -> None:
         self.owner = owner  # fighter but can't annotate bc circular
         self.damage = damage
         self.direction = direction
         self.duration = duration
         self.time_left = duration
         self.offset = offset
+        self.velocity = velocity
+        self.isRanged = isRanged
+        
+        if not self.isRanged:
+            self.collider: pygame.Rect = pygame.Rect(
+                self.owner.collider.left() + direction * offset,
+                self.owner.collider.top(),
+                self.owner.collider.width,
+                self.owner.collider.height,
+            )
+        else:
+            self.collider : pygame.Rect = pygame.Rect(
+                (self.owner.collider.left() if direction == -1 else self.owner.collider.right()), 
+                self.owner.collider.top() + self.owner.collider.height/2 - 20,
+                20,
+                20,
+            )
+            
+            image_path = "assets/note.png"
+            self.image = pygame.image.load(image_path).convert_alpha()
+            self.image = pygame.transform.scale(self.image, (20, 20))
 
-        self.collider: pygame.Rect = pygame.Rect(
-            self.owner.collider.left() + direction * offset,
-            self.owner.collider.top(),
-            self.owner.collider.width,
-            self.owner.collider.height,
-        )
-        # seconds
+
 
     def tick(self, delta_time) -> bool:
-        """
-        Returns whether or not the attack should persist to the next tick
-        """
+        movement = self.velocity * self.direction * delta_time
+        self.collider.move_ip(movement, 0)
+        
         self.time_left -= delta_time
 
         return self.time_left > 0
 
     def draw(self, surface: pygame.Surface) -> None:
-        pygame.draw.rect(surface=surface, color=(255, 255, 0), rect=self.collider)
+        if self.isRanged:
+            surface.blit(self.image, self.collider)
