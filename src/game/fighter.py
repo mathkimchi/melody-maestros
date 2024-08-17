@@ -155,7 +155,9 @@ class Fighter(ABC):
 
     def jump(self) -> None:
         if self.is_grounded:
+            # print("Jumped!")
             self.velocity.y = JUMP_STRENGTH
+            self.collider.y -= 0.001 # get it off ground
             self.is_grounded = False
 
     def do_fast_attack(self):

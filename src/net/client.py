@@ -71,5 +71,5 @@ class Client:
                 if clicked_key == pygame.K_LSHIFT:
                     action_set.attack = 1
 
-        print(f"Sending: {json.dumps(asdict(action_set))=}")
+        # print(f"Sending: {json.dumps(asdict(action_set))=}")
         self.server_socket.sendall((json.dumps(asdict(action_set))+"\n").encode())
