@@ -27,6 +27,8 @@ class GameState:
             self.player.jump()
         if pressed_keys[pygame.K_LSHIFT] == True:
             self.player.fast_attack()
+        if pressed_keys[pygame.K_z] == True:
+            self.player.ranged_attack()
 
         # update "children"
         self.player.tick(delta_time)
