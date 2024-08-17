@@ -96,7 +96,7 @@ class Fighter(ABC):
 
             for attack in other_player.attacks:
                 if self.collider.colliderect(attack.collider):
-                    print("OUCHIES!")
+                    self.health -= attack.damage
 
         # apply friction
         if self.is_grounded:
