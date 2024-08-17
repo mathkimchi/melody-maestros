@@ -54,7 +54,7 @@ class Fighter(ABC):
         # platform collision
         for platform in self.gs.platforms:
             other_collider: Collider = platform.collider
-            if self.collider.colliderect(other_collider):
+            if self.collider.colliderect(other_collider, count_touching=True):
                 collision_direction = get_collision_direction(
                     self.collider, other_collider
                 )

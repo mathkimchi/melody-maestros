@@ -42,13 +42,21 @@ class Collider:
         self.x += move_by.x
         self.y += move_by.y
 
-    def colliderect(self, other: "Collider") -> bool:
-        return (
-            self.x < other.x + other.width
-            and self.x + self.width > other.x
-            and self.y < other.y + other.height
-            and self.y + self.height > other.y
-        )
+    def colliderect(self, other: "Collider", count_touching:bool = False) -> bool:
+        if count_touching:
+            return (
+                self.x <= other.x + other.width
+                and self.x + self.width >= other.x
+                and self.y <= other.y + other.height
+                and self.y + self.height >= other.y
+            )
+        else:
+            return (
+                self.x < other.x + other.width
+                and self.x + self.width > other.x
+                and self.y < other.y + other.height
+                and self.y + self.height > other.y
+            )
 
 
 # def collider_from_rect(rect: pygame.Rect) -> Collider:
