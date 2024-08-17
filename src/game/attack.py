@@ -48,7 +48,9 @@ class Attack:
 
     def draw(self, surface: pygame.Surface) -> None:
         if not self.isRanged:
-            pygame.draw.rect(surface, "yellow", self.collider)
+            pygame.draw.rect(
+            surface=surface, color=(255, 0, 0), rect=self.collider.get_rect()
+        )
         
         if self.isRanged:
             pos = (self.collider.x, self.collider.y)
