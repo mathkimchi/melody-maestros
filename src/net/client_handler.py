@@ -2,6 +2,7 @@ from game.game_state import GameState
 import pygame
 import socket
 import json
+from game.player_actions import PlayerActionSet
 
 
 class ClientHandler:
@@ -12,7 +13,6 @@ class ClientHandler:
     def __init__(self, client_socket: socket.socket, server, player_id: int) -> None:
         self.client_socket = client_socket
         self.server = server
-        self.gs: GameState = self.server.gs
         self.player_id = player_id
 
     def run(self) -> None:
@@ -20,6 +20,8 @@ class ClientHandler:
         self.client_socket.sendall(json.dumps(self.player_id).encode())
 
         while True:
-            packet = self.client_socket.recv(1024)
+            packet = PlayerActionSet(
+                **json.loads(self.client_socket.recv(1024).decode())
+            )
 
-            print(f"Recieved packet: {packet}")
+            self.server.process_packet(self, packet)

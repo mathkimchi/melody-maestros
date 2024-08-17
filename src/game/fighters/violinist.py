@@ -13,12 +13,8 @@ class Violinist(Fighter):
     def draw(self, surface: pygame.Surface):
         super().draw(surface)
 
-    def fast_attack(self):
-        self.attacks.append(
-            Attack(self, damage=10, duration=0.1, direction=self.direction)
-        )
+    def generate_fast_attack(self) -> Attack:
+        return Attack(self, damage=10, duration=0.1, direction=self.direction)
 
-    def strong_attack(self):
-        self.attacks.append(
-            Attack(self, damage=20, duration=0.1, direction=self.direction)
-        )
+    def generate_strong_attack(self) -> Attack:
+        return Attack(self, damage=20, duration=0.1, direction=self.direction)

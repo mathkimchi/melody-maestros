@@ -1,4 +1,5 @@
 from game.game_state import GameState
+from game.player_actions import PlayerActionSet
 from .client_handler import ClientHandler
 import pygame
 import sys
@@ -69,3 +70,8 @@ class Server:
             client_handler_thread = threading.Thread(target=client_handler.run)
             client_handler_thread.start()
             self.client_handlers.append(client_handler)
+
+    def process_packet(self, client_handler: ClientHandler, packet: PlayerActionSet):
+        """Handles packet from client to server. Currentlym packets are just action sets"""
+
+        self.gs.players[client_handler.player_id].process_action_set(packet)

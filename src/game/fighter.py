@@ -1,9 +1,11 @@
 import pygame
 from .attack import Attack
 from .collider import Collider, get_collision_direction
+from abc import ABC, abstractmethod
+from .player_actions import PlayerActionSet
 
 
-class Fighter:
+class Fighter(ABC):
     def __init__(self, gs) -> None:
         self.gs = gs  # NOTE: can not type hint game state bc circular import
         # TODO: use in-game scale different from pixel scale
@@ -132,16 +134,32 @@ class Fighter:
         for attack in self.attacks:
             attack.draw(surface=surface)
 
-    def move_left(self) -> None:
-        self.move_input = -1
+    def process_action_set(self, action_set: PlayerActionSet):
+        self.move_input = action_set.walk_direction
 
-    def move_right(self) -> None:
-        self.move_input = 1
+        if action_set.jump:
+            self.jump()
 
-    def stop(self) -> None:
-        self.move_input = 0
+        if action_set.attack == 1:
+            self.do_fast_attack()
+        elif action_set.attack == 2:
+            self.do_fast_attack()
 
     def jump(self) -> None:
         if self.is_grounded:
             self.velocity.y = self.jump_strength
             self.is_grounded = False
+
+    def do_fast_attack(self):
+        self.attacks.append(self.generate_fast_attack())
+
+    def do_strong_attack(self):
+        self.attacks.append(self.generate_strong_attack())
+
+    @abstractmethod
+    def generate_fast_attack(self) -> Attack:
+        pass
+
+    @abstractmethod
+    def generate_strong_attack(self) -> Attack:
+        pass
