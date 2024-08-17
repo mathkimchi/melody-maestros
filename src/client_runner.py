@@ -10,7 +10,7 @@ if __name__ == "__main__":  # if this is the file being run
     port = input("Port: ")
     if port == "":
         print("Defaulting to 8080.")
-        port = 8080
+        port = 8010
     else:
         port = int(port)
 
