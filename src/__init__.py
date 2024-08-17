@@ -4,7 +4,7 @@ This is the file that actually runs Melody Maestros.
 
 import sys
 import pygame
-from game_state import GameState
+from game.game_state import GameState
 
 if __name__ == "__main__":  # if this is the file being run
     # initialization stuff

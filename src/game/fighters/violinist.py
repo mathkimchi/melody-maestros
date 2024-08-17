@@ -1,6 +1,7 @@
 from fighter import Fighter
-from attack import Attack
+from src.game.attack import Attack
 import pygame
+
 
 class Violinist(Fighter):
     def __init__(self, gs):
@@ -13,7 +14,9 @@ class Violinist(Fighter):
         super().draw(surface)
 
     def fast_attack(self):
-        self.attacks.append(Attack(self, damage=10, duration = 0.1, direction=self.direction))
+        self.attacks.append(
+            Attack(self, damage=10, duration=0.1, direction=self.direction)
+        )
 
     def strong_attack(self):
         self.attacks.append(Attack(self))
