@@ -83,12 +83,14 @@ class Server:
                 player_id=self.id_counter,
                 collider=Collider(1.0, 0.0, 50.0, 100.0),
             )
-            client_handler = ClientHandler(conn, self, self.id_counter, auto_start=True)
+            client_handler = ClientHandler(
+                conn, self, self.id_counter, auto_start=True)
 
             self.client_handlers.append(client_handler)
             self.id_counter += 1
 
     def process_packet(self, client_handler: ClientHandler, packet: PlayerActionSet):
         """Handles packet from client to server. Currentlym packets are just action sets"""
-
-        self.gs.players[client_handler.player_id].process_action_set(packet)
+        if client_handler.player_id in self.gs.players:
+            self.gs.players[client_handler.player_id].process_action_set(
+                packet)

@@ -37,8 +37,16 @@ class GameState:
         """
 
         # update "children"
-        for player in self.players.values():
-            player.tick(delta_time)
+        bad = set()
+        for key in self.players:
+            if self.players[key].health <= 0:
+                bad.add(key)
+                continue
+            self.players[key].tick(delta_time)
+        for bad_key in bad:
+            del self.players[bad_key]
+        # for player in self.players.values():
+        #     player.tick(delta_time)
         for platform in self.platforms:
             platform.tick(delta_time)
 
@@ -48,7 +56,7 @@ class GameState:
         # print(f"{self.players[0].toJsonObj()=}")
         # print(f"{self.toJsonObj()=}")
 
-        self.check_game_over()
+        print(self.players)
 
     def draw(self, surface: pygame.Surface) -> None:
         """Does NOT update surface"""
@@ -56,15 +64,15 @@ class GameState:
         # draw "children"
         # draw the player as a rectangle
         for player in self.players.values():
-            if player.health <= 0:
-                continue
+            # if player.health <= 0:
+            #     continue
             player.draw(surface=surface)
         for platform in self.platforms:
             platform.draw(surface=surface)
 
     def toJsonObj(self) -> dict[str, object]:
         return {
-            "players": {id: player.toJsonObj() for id, player in self.players.items()},
+            "players": {id: player.toJsonObj() for id, player in self.players.items() if player.health > 0},
             "platforms": [platform.toJsonObj() for platform in self.platforms],
         }
 
@@ -99,6 +107,7 @@ class GameState:
         self.players = {
             id: from_json_obj(player_dict, self, id)
             for id, player_dict in new["players"].items()
+            if player_dict["health"] > 0
         }
         self.platforms = [
             Platform(self, Collider(**platform)) for platform in new["platforms"]
