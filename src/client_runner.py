@@ -5,13 +5,14 @@ Runs just the client.
 from net.client import Client
 
 if __name__ == "__main__":  # if this is the file being run
-    addr = input("Server IP: ")
+    # addr = input("Server IP: ")
 
-    port = input("Port: ")
-    if port == "":
-        print("Defaulting to 8080.")
-        port = 8010
-    else:
-        port = int(port)
+    # port = input("Port: ")
+    # if port == "":
+    #     print("Defaulting to 8080.")
+    #     port = 8010
+    # else:
+    #     port = int(port)
 
-    Client((addr, port)).run()
+    # Client(("0.0.0.0", 8080)).run()
+    Client(("0.tcp.jp.ngrok.io", 15017)).run()
