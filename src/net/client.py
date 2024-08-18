@@ -9,6 +9,7 @@ from .socket_input_stream import SocketInputStream
 from sound_input.sound_events import SoundEventQueue
 
 ALLOW_KEYBOARD_ATTACKS = False
+PLAY_MUSIC = True
 
 
 class Client:
@@ -33,6 +34,17 @@ class Client:
         self.continue_running = True
 
     def run(self) -> None:
+        if PLAY_MUSIC:
+            pygame.mixer.init()
+            music = pygame.mixer.Sound("assets/soundtrack/fight.mp3")
+            # trim bc musescore exports with an end pause, theoretically exact but is still weird
+            music_raw = music.get_raw()
+            music_raw = music_raw[
+                : int((len(music_raw) / music.get_length()) * 60 / 170 * 7 * 4)
+            ]
+            music = pygame.mixer.Sound(music_raw)
+            music.play(-1)
+
         self.sound_event_queue = SoundEventQueue()
 
         while self.continue_running:
