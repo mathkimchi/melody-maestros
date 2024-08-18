@@ -1,7 +1,9 @@
+from sound_input.combo import Combo
 from ..fighter import Fighter
 from ..attack import Attack
 import pygame
 import os
+from ..collider import Collider
 
 
 class Violinist(Fighter):
@@ -139,9 +141,69 @@ class Violinist(Fighter):
         for attack in self.attacks:
             attack.draw(surface)
 
+    def do_combo(self, combo: Combo) -> None:
+        match combo:
+            case Combo.FAST_ATTACK:
+                self.fast_attack()
+            case Combo.RANGED_ATTACK:
+                self.ranged_attack()
+            case Combo.STRONG_ATTACK:
+                self.attacks.append(
+                    Attack(
+                        self.collider, damage=10, duration=0.1, direction=self.direction
+                    )
+                )
+                self.current_animation = "attack"
+                self.current_frame = 0
+                self.attack_timer = 0
+            case Combo.FALL_ATTACK:
+                if not self.is_grounded:
+                    self.attacks.append(
+                        Attack(
+                            owner_collider=self.collider,
+                            damage=12,
+                            duration=0.1,
+                            direction=self.direction,
+                            collider=Collider(
+                                self.collider.x,
+                                self.collider.bottom(),
+                                self.collider.width,
+                                60,
+                            ),
+                        )
+                    )
+                    self.current_animation = "attack"
+                    self.current_frame = 0
+                    self.attack_timer = 0
+                    self.velocity.y += 100
+            case Combo.JUMP_ATTACK:
+                if self.is_grounded:
+                    self.attacks.append(
+                        Attack(
+                            owner_collider=self.collider,
+                            damage=12,
+                            duration=0.1,
+                            direction=self.direction,
+                            collider=Collider(
+                                self.collider.x,
+                                self.collider.top() - 60,
+                                self.collider.width,
+                                60,
+                            ),
+                        )
+                    )
+                    self.current_animation = "attack"
+                    self.current_frame = 0
+                    self.attack_timer = 0
+                    self.jump()
+            case Combo.BLOCK:
+                pass
+
+        print(f"Combo done: {combo=}")
+
     def fast_attack(self):
         self.attacks.append(
-            Attack(self.collider, damage=10, duration=0.1, direction=self.direction)
+            Attack(self.collider, damage=5, duration=0.1, direction=self.direction)
         )
         self.current_animation = "attack"
         self.current_frame = 0
@@ -161,16 +223,18 @@ class Violinist(Fighter):
         self.current_animation = "ranged_attack"
         self.current_frame = 0
         self.attack_timer = 0
-        
+
     def toJsonObj(self) -> dict:
         # Start with the superclass's toJsonObj
         obj = super().toJsonObj()
 
         # Add the animation-specific fields
-        obj.update({
-            "current_animation": self.current_animation,
-            "current_frame": self.current_frame,
-            "animation_time": self.animation_time,
-            "attack_timer": self.attack_timer,
-        })
+        obj.update(
+            {
+                "current_animation": self.current_animation,
+                "current_frame": self.current_frame,
+                "animation_time": self.animation_time,
+                "attack_timer": self.attack_timer,
+            }
+        )
         return obj

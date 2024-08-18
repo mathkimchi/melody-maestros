@@ -4,6 +4,7 @@ from .collider import Collider, get_collision_direction
 from abc import ABC, abstractmethod
 from .player_actions import PlayerActionSet
 import dataclasses
+from sound_input.combo import Combo
 
 JUMP_STRENGTH = -550
 MOVE_SPEED = 1500
@@ -170,10 +171,8 @@ class Fighter(ABC):
         if action_set.jump:
             self.jump()
 
-        if action_set.attack == 1:
-            self.fast_attack()
-        elif action_set.attack == 2:
-            self.ranged_attack()
+        if action_set.combo != None:
+            self.do_combo(action_set.combo)
 
     def jump(self) -> None:
         if self.is_grounded:
@@ -183,11 +182,7 @@ class Fighter(ABC):
             self.is_grounded = False
 
     @abstractmethod
-    def fast_attack(self):
-        pass
-
-    @abstractmethod
-    def ranged_attack(self):
+    def do_combo(self, combo: Combo) -> None:
         pass
 
     def toJsonObj(self) -> dict[str, object]:

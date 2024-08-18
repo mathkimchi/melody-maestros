@@ -11,7 +11,7 @@ class Collider:
     width: float
     height: float
 
-    def __init__(self, x, y, width, height) -> None:
+    def __init__(self, x: float, y: float, width: float, height: float) -> None:
         self.x: float = x
         self.y: float = y
         self.width: float = width
@@ -42,7 +42,7 @@ class Collider:
         self.x += move_by.x
         self.y += move_by.y
 
-    def colliderect(self, other: "Collider", count_touching:bool = False) -> bool:
+    def colliderect(self, other: "Collider", count_touching: bool = False) -> bool:
         if count_touching:
             return (
                 self.x <= other.x + other.width

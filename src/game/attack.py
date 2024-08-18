@@ -4,6 +4,9 @@ import os
 import dataclasses
 
 
+DRAW_DBG_RECT = True
+
+
 class Attack:
     def __init__(
         self,
@@ -26,12 +29,15 @@ class Attack:
         self.isRanged = isRanged
 
         if not self.isRanged:
-            self.collider: Collider = Collider(
-                self.owner_collider.left() + direction * offset,
-                self.owner_collider.top(),
-                self.owner_collider.width,
-                self.owner_collider.height,
-            )
+            if collider is None:
+                self.collider: Collider = Collider(
+                    self.owner_collider.left() + direction * offset,
+                    self.owner_collider.top(),
+                    self.owner_collider.width,
+                    self.owner_collider.height,
+                )
+            else:
+                self.collider = collider
         else:
             if collider is None:
                 self.collider: Collider = Collider(
@@ -60,10 +66,10 @@ class Attack:
         return self.time_left > 0
 
     def draw(self, surface: pygame.Surface) -> None:
-        # if not self.isRanged:
-            # pygame.draw.rect(
-            #     surface=surface, color=(255, 0, 0), rect=self.collider.get_rect()
-            # )
+        if DRAW_DBG_RECT:
+            pygame.draw.rect(
+                surface=surface, color=(255, 0, 0), rect=self.collider.get_rect()
+            )
 
         if self.isRanged:
             pos = (self.collider.x, self.collider.y)

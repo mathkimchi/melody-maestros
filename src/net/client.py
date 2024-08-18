@@ -7,6 +7,7 @@ import json
 from dataclasses import asdict
 from .socket_input_stream import SocketInputStream
 from sound_input.sound_events import SoundEventQueue
+from sound_input.combo import Combo
 
 ALLOW_KEYBOARD_ATTACKS = True
 PLAY_MUSIC = True
@@ -72,7 +73,7 @@ class Client:
 
     def handle_inputs(self) -> None:
         # start with default (no actions)
-        action_set = PlayerActionSet(0, False, 0)
+        action_set = PlayerActionSet(0, False, None)
 
         pressed_keys = pygame.key.get_pressed()
 
@@ -88,18 +89,22 @@ class Client:
                 if clicked_key == pygame.K_UP:
                     action_set.jump = True
                 if ALLOW_KEYBOARD_ATTACKS:
-                    if clicked_key == pygame.K_LSHIFT:
-                        action_set.attack = 1
-                    if clicked_key == pygame.K_z:
-                        action_set.attack = 2
+                    if clicked_key == pygame.K_1:
+                        action_set.combo = Combo(1)
+                    if clicked_key == pygame.K_2:
+                        action_set.combo = Combo(2)
+                    if clicked_key == pygame.K_3:
+                        action_set.combo = Combo(3)
+                    if clicked_key == pygame.K_4:
+                        action_set.combo = Combo(4)
+                    if clicked_key == pygame.K_5:
+                        action_set.combo = Combo(5)
+                    if clicked_key == pygame.K_6:
+                        action_set.combo = Combo(6)
 
         for sound_event in self.sound_event_queue.get_combos():
             print(sound_event)
-            match sound_event:
-                case 1:
-                    action_set.attack = 1
-                case 2:
-                    action_set.attack = 2
+            action_set.combo = sound_event
 
         # print(f"Sending: {json.dumps(asdict(action_set))=}")
-        self.server_socket.sendall((json.dumps(asdict(action_set)) + "\n").encode())
+        self.server_socket.sendall((json.dumps(action_set.toJsonObj()) + "\n").encode())
