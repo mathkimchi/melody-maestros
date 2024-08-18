@@ -77,9 +77,10 @@ class Client:
             self.gs.draw(surface=self.screen)
 
             players = self.gs.players
-            if players[str(self.player_id)].health <= 0:
+            if str(self.player_id) not in players:
                 self.screen.blit(self.die_text, (16, 16))
                 self.screen.blit(self.die_overlay, (0, 0))
+
             # else:
             #     alive_players, dead_players = 0, 0
             #     for player in players.values():
