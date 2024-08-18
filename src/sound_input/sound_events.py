@@ -12,7 +12,8 @@ class SoundEventQueue:
     def __init__(self) -> None:
         self.cs = ComboStream()
         self.event_queue: list[Combo] = []
-
+        # make a new thread for audio listening
+        # can't run in main loop because this is very time-sensitive
         threading.Thread(target=self.collect_combos_loop).start()
 
     def collect_combos_loop(self):

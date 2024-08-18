@@ -46,10 +46,6 @@ class Server:
                         self.serversocket.close()
                         sys.exit()
 
-                # ---
-                # Display
-
-                # reset display
                 self.screen.fill((255, 255, 255))
 
                 self.gs.draw(surface=self.screen)
@@ -70,6 +66,7 @@ class Server:
         # close everything
         self.serversocket.close()
 
+    # new client online
     def client_accept_loop(self):
         self.serversocket.listen()
         while self.continue_running:

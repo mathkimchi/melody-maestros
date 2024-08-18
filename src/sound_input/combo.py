@@ -2,6 +2,7 @@ import enum
 
 
 class Tone(enum.Enum):
+    # list of tones here in MIDI (because that is what aubio uses)
     LOW = 40
     F2 = 41
     FG2 = 42
@@ -40,7 +41,8 @@ class Tone(enum.Enum):
     DE5 = 75
     E5 = 76
     HIGH = 77
-    # __order__ = "LOW F2 G2 A2 B2 C3 D3 E3 F3 G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 HIGH"
+
+# list of combos that trigger attacks
 
 
 class Combo(enum.Enum):
@@ -108,7 +110,7 @@ def get_held_notes(all_notes):
 def matches_combo(held_notes, combo: Combo) -> bool:
     return (
         len(held_notes) >= len(combo.get_notes())
-    ) and combo.get_notes() == held_notes[-len(combo.get_notes()) :]
+    ) and combo.get_notes() == held_notes[-len(combo.get_notes()):]
 
 
 def find_matching_combo(notes) -> None | Combo:

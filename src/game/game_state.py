@@ -37,6 +37,7 @@ class GameState:
         """
 
         # update "children"
+        # remove dead players from list (yeah this is quite bad)
         bad = set()
         for key in self.players:
             if self.players[key].health <= 0:
@@ -45,8 +46,7 @@ class GameState:
             self.players[key].tick(delta_time)
         for bad_key in bad:
             del self.players[bad_key]
-        # for player in self.players.values():
-        #     player.tick(delta_time)
+
         for platform in self.platforms:
             platform.tick(delta_time)
 

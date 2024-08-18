@@ -35,16 +35,12 @@ class Client:
         self.clock = pygame.time.Clock()
         self.continue_running = True
 
+        # things to display when player dies
         pygame.font.init()
         font = pygame.font.SysFont("Comic Sans MS", 36)
         self.die_text = font.render("You died!", False, (0, 0, 0))
-        self.win_text = font.render("Win!", False, (0, 0, 0))
-
         self.die_overlay = pygame.Surface((1200, 600), pygame.SRCALPHA)
         self.die_overlay.fill((255, 0, 0, 30))
-
-        self.win_overlay = pygame.Surface((1200, 600), pygame.SRCALPHA)
-        self.win_overlay.fill((0, 255, 0, 30))
 
     def run(self) -> None:
         if PLAY_MUSIC:
@@ -68,34 +64,18 @@ class Client:
 
             # # The client GS is just an imitation of the server gs
             self.gs.parse_json_in_place(self.socket_input_stream.get_object())
-            # print(self.socket_input_stream.get_object(), self.player_id)
-
+            # reset and draw
             self.screen.fill((255, 255, 255))
-            # print(self.gs.players)
-            # if str(self.player_id) in self.gs.players:
-
             self.gs.draw(surface=self.screen)
 
+            # server will remove player from list of players when they die
+            # if current player is not there, player is dead and show overlay
             players = self.gs.players
             if str(self.player_id) not in players:
                 self.screen.blit(self.die_text, (16, 16))
                 self.screen.blit(self.die_overlay, (0, 0))
 
-            # else:
-            #     alive_players, dead_players = 0, 0
-            #     for player in players.values():
-            #         if player.health <= 0:
-            #             continue
-            #         alive_players += 1
-            #         if alive_players >= 2:
-            #             break
-            #     if alive_players == 1:
-            #         print("win")
-
-            # NOTE changes don't show until this is called
             pygame.display.update()
-            # ---
-
             self.handle_inputs()
 
     def handle_inputs(self) -> None:
@@ -104,9 +84,10 @@ class Client:
 
         pressed_keys = pygame.key.get_pressed()
 
-        if pressed_keys[pygame.K_LEFT] == True:
+        # handle movement
+        if pressed_keys[pygame.K_LEFT]:
             action_set.walk_direction = -1
-        elif pressed_keys[pygame.K_RIGHT] == True:
+        elif pressed_keys[pygame.K_RIGHT]:
             action_set.walk_direction = +1
 
         for event in pygame.event.get():
@@ -129,10 +110,10 @@ class Client:
                     if clicked_key == pygame.K_6:
                         action_set.combo = Combo(6)
 
+        # handle sound
         for sound_event in self.sound_event_queue.get_combos():
             print(sound_event)
             action_set.combo = sound_event
 
-        # print(f"Sending: {json.dumps(asdict(action_set))=}")
         self.server_socket.sendall(
             (json.dumps(action_set.toJsonObj()) + "\n").encode())

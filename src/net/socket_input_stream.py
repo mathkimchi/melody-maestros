@@ -8,6 +8,7 @@ import json
 import socket
 import threading
 
+
 class SocketInputStream:
     def __init__(self, connection_socket: socket.socket, auto_start=False) -> None:
         self.connection_socket = connection_socket
@@ -19,7 +20,8 @@ class SocketInputStream:
     def run_input_loop(self):
         leftover_packet_str = ""
         while True:
-            packets_str = leftover_packet_str+self.connection_socket.recv(1024).decode()
+            packets_str = leftover_packet_str + \
+                self.connection_socket.recv(1024).decode()
 
             split_packets = packets_str.split("\n")
 
@@ -29,7 +31,7 @@ class SocketInputStream:
                 self.objects_queue.append(json.loads(packet_str))
 
     def get_object(self):
-        while len(self.objects_queue)==0:
+        while len(self.objects_queue) == 0:
             import time
             time.sleep(0.01)
 
