@@ -2,7 +2,7 @@ import enum
 
 
 class Tone(enum.Enum):
-    LOW = 39
+    LOW = 40
     F2 = 41
     FG2 = 42
     G2 = 43
@@ -25,7 +25,7 @@ class Tone(enum.Enum):
     C4 = 60
     CD4 = 61
     D4 = 62
-    DE4 = 64
+    DE4 = 63
     E4 = 64
     F4 = 65
     FG4 = 66
@@ -39,7 +39,7 @@ class Tone(enum.Enum):
     D5 = 74
     DE5 = 75
     E5 = 76
-    HIGH = 78
+    HIGH = 77
     # __order__ = "LOW F2 G2 A2 B2 C3 D3 E3 F3 G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 HIGH"
 
 
@@ -68,8 +68,8 @@ class Combo(enum.Enum):
                 return [Tone.G2.value]
 
 
-MIN_HOLD_LEN = 3
-BREAK_LEN = 20
+MIN_HOLD_LEN = 5
+BREAK_LEN = 50
 
 
 def get_held_notes(all_notes):
