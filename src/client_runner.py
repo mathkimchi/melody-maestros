@@ -5,7 +5,7 @@ Runs just the client.
 from net.client import Client
 import urllib3
 
-GET_URL_LOCALLY = True
+GET_URL_LOCALLY = False
 
 if __name__ == "__main__":  # if this is the file being run
     # addr = input("Server IP: ")
