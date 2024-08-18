@@ -6,6 +6,9 @@ import socket
 import json
 from dataclasses import asdict
 from .socket_input_stream import SocketInputStream
+from sound_input.sound_events import SoundEventQueue
+
+ALLOW_KEYBOARD_ATTACKS = False
 
 
 class Client:
@@ -13,7 +16,9 @@ class Client:
         # initial comminication with client handler
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.connect(server_address)
-        self.socket_input_stream = SocketInputStream(self.server_socket, auto_start=True)
+        self.socket_input_stream = SocketInputStream(
+            self.server_socket, auto_start=True
+        )
         self.player_id: int = self.socket_input_stream.get_object()
         print(f"Client recieved initial message: {self.player_id}")
         # The client GS is just an imitation of the server gs
@@ -28,6 +33,8 @@ class Client:
         self.continue_running = True
 
     def run(self) -> None:
+        self.sound_event_queue = SoundEventQueue()
+
         while self.continue_running:
             for event in pygame.event.get():
                 # exit handle
@@ -68,10 +75,19 @@ class Client:
                 clicked_key: int = event.key
                 if clicked_key == pygame.K_UP:
                     action_set.jump = True
-                if clicked_key == pygame.K_LSHIFT:
+                if ALLOW_KEYBOARD_ATTACKS:
+                    if clicked_key == pygame.K_LSHIFT:
+                        action_set.attack = 1
+                    if clicked_key == pygame.K_z:
+                        action_set.attack = 2
+
+        for sound_event in self.sound_event_queue.get_combos():
+            print(sound_event)
+            match sound_event:
+                case 1:
                     action_set.attack = 1
-                if clicked_key == pygame.K_z:
+                case 2:
                     action_set.attack = 2
 
         # print(f"Sending: {json.dumps(asdict(action_set))=}")
-        self.server_socket.sendall((json.dumps(asdict(action_set))+"\n").encode())
+        self.server_socket.sendall((json.dumps(asdict(action_set)) + "\n").encode())

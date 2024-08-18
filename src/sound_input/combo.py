@@ -51,7 +51,7 @@ FAST_ATTACK = [  # 1
 RANGED_ATTACK = [  # 2
     Tone.C3.value,
     Tone.G3.value,
-    Tone.C4.value,
+    Tone.C3.value,
 ]
 STRONG_ATTACK = [
     Tone.C3.value,
