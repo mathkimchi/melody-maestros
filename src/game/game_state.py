@@ -82,6 +82,10 @@ class GameState:
                         self.parse_attack_dict(attack) for attack in obj["attacks"]
                     ],
                 )
+                
+                """
+                I have no idea how this works, but it works, and it's cool
+                """
                 violinist.current_animation = obj["current_animation"]
                 violinist.current_frame = obj["current_frame"]
                 violinist.animation_time = obj["animation_time"]
