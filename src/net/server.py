@@ -1,6 +1,7 @@
 import json
 from game.game_state import GameState
 from game.player_actions import PlayerActionSet
+from game.collider import Collider
 from .client_handler import ClientHandler
 import pygame
 import sys
@@ -76,8 +77,11 @@ class Server:
 
             print(f"New client from: {addr=}")
 
+            # spawn a violinist
             self.gs.players[self.id_counter] = Violinist(
-                self.gs, player_id=self.id_counter
+                self.gs,
+                player_id=self.id_counter,
+                collider=Collider(1.0, 0.0, 50.0, 100.0),
             )
             client_handler = ClientHandler(conn, self, self.id_counter, auto_start=True)
 

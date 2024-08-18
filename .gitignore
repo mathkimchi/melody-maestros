@@ -1,4 +1,5 @@
 # tools used for development
 .vscode
+**/.mscbackup
 
 **/__pycache__

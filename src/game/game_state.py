@@ -13,23 +13,22 @@ class GameState:
     def __init__(self) -> None:
         self.players: dict[int, Fighter] = {}
         self.platforms = [
-        # Main floor
-        Platform(self, Collider(0.0, 550.0, 1200.0, 50.0)),
+            # Main floor
+            Platform(self, Collider(0.0, 550.0, 1200.0, 50.0)),
+            # Left platform
+            Platform(self, Collider(200.0, 400.0, 250.0, 20.0)),
+            # Right platform
+            Platform(self, Collider(750.0, 400.0, 250.0, 20.0)),
+            # Top center platform
+            Platform(self, Collider(500.0, 250.0, 200.0, 20.0)),
+            # Left Barrier
+            Platform(self, Collider(-100.0, 0.0, 100.0, 1000.0)),
+            # Right Barrier
+            Platform(self, Collider(1200.0, 0.0, 100.0, 1000.0)),
+        ]
 
-        # Left platform
-        Platform(self, Collider(200.0, 400.0, 250.0, 20.0)),
-
-        # Right platform
-        Platform(self, Collider(750.0, 400.0, 250.0, 20.0)),
-
-        # Top center platform
-        Platform(self, Collider(500.0, 250.0, 200.0, 20.0)),
-    ]
-
-        
         self.game_over = False
         self.winner = None
-
 
     def tick(self, delta_time) -> None:
         """
@@ -42,7 +41,6 @@ class GameState:
             player.tick(delta_time)
         for platform in self.platforms:
             platform.tick(delta_time)
-            
 
         # print(f"-------------")
         # print(f"{self.__dict__=}")
@@ -82,7 +80,7 @@ class GameState:
                         self.parse_attack_dict(attack) for attack in obj["attacks"]
                     ],
                 )
-                
+
                 """
                 I have no idea how this works, but it works, and it's cool
                 """
@@ -123,14 +121,14 @@ class GameState:
                 obj["collider"]["height"],
             ),
         )
-        
+
     def check_game_over(self):
         for player_id, player in self.players.items():
             if player.health <= 0:
                 self.game_over = True
                 self.winner = 3 - player_id
                 break
-            
+
     def reset_game(self):
         # Reset player positions, health, etc.
         for player in self.players.values():
@@ -139,4 +137,3 @@ class GameState:
             player.collider.y = player.initial_y
         self.game_over = False
         self.winner = None
-    

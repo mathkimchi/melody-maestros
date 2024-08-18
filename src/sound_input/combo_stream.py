@@ -2,7 +2,7 @@ import pyaudio
 import numpy as np
 import aubio
 import collections
-from .combo import Tone, find_matching_combo, get_held_notes
+from .combo import Tone, find_matching_combo, get_held_notes, Combo
 
 
 MIC_BUFFER_SIZE = 2048
@@ -51,7 +51,7 @@ class ComboStream:
         self.pitch_o.set_unit("midi")
         self.pitch_o.set_tolerance(self.tolerance)
 
-    def get_combo_id(self) -> int:
+    def get_combo_id(self) -> Combo:
         notes = collections.deque([0 for _ in range(200)])
         while True:
             audiobuffer = self.stream.read(MIC_BUFFER_SIZE, exception_on_overflow=False)
@@ -64,14 +64,10 @@ class ComboStream:
                 notes.append(cur_pitch.value)
             notes.popleft()
 
-            # print(f"{notes=}")
-            # print(f"{get_held_notes(list(notes))=}")
+            print(f"{notes=}")
+            print(f"{get_held_notes(list(notes))=}")
 
-            match find_matching_combo(notes):
+            combo = find_matching_combo(notes)
+            if combo != None:
                 # good thing about returning is that notes restart
-                case 0:
-                    pass
-                case 1:
-                    return 1
-                case 2:
-                    return 2
+                return combo

@@ -43,25 +43,32 @@ class Tone(enum.Enum):
     # __order__ = "LOW F2 G2 A2 B2 C3 D3 E3 F3 G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 HIGH"
 
 
-FAST_ATTACK = [  # 1
-    Tone.C3.value,
-    Tone.E3.value,
-    Tone.F3.value,
-]
-RANGED_ATTACK = [  # 2
-    Tone.C3.value,
-    Tone.G3.value,
-    Tone.C3.value,
-]
-STRONG_ATTACK = [
-    Tone.C3.value,
-    Tone.G3.value,
-    Tone.F3.value,
-    Tone.D3.value,
-    Tone.E3.value,
-]
+class Combo(enum.Enum):
+    # 0 is reserved for None
+    FAST_ATTACK = 1
+    RANGED_ATTACK = 2
+    STRONG_ATTACK = 3
+    FALL_ATTACK = 4
+    JUMP_ATTACK = 5
+    BLOCK = 6
 
-MIN_HOLD_LEN = 5
+    def get_notes(self) -> list[int]:
+        match self:
+            case Combo.FAST_ATTACK:
+                return [Tone.C3.value]
+            case Combo.RANGED_ATTACK:
+                return [Tone.E3.value, Tone.G3.value, Tone.B2.value]
+            case Combo.STRONG_ATTACK:
+                return [Tone.G3.value, Tone.E3.value, Tone.G3.value]
+            case Combo.FALL_ATTACK:
+                return [Tone.G3.value, Tone.F3.value, Tone.E3.value]
+            case Combo.JUMP_ATTACK:
+                return [Tone.E3.value, Tone.F3.value, Tone.G3.value]
+            case Combo.BLOCK:
+                return [Tone.G2.value]
+
+
+MIN_HOLD_LEN = 3
 BREAK_LEN = 20
 
 
@@ -98,15 +105,15 @@ def get_held_notes(all_notes):
     return reverse_held_notes[::-1]
 
 
-def matches_combo(held_notes, combo) -> bool:
-    return (len(held_notes) >= len(combo)) and combo == held_notes[-len(combo) :]
+def matches_combo(held_notes, combo: Combo) -> bool:
+    return (
+        len(held_notes) >= len(combo.get_notes())
+    ) and combo.get_notes() == held_notes[-len(combo.get_notes()) :]
 
 
-def find_matching_combo(notes) -> int:
+def find_matching_combo(notes) -> None | Combo:
     held_notes = get_held_notes(list(notes))
-    if matches_combo(held_notes, FAST_ATTACK):
-        return 1
-    elif matches_combo(held_notes, RANGED_ATTACK):
-        return 2
-    else:
-        return 0
+    for combo in Combo:
+        if matches_combo(held_notes, combo):
+            return combo
+    return None
