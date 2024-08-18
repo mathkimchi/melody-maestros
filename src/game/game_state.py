@@ -70,7 +70,7 @@ class GameState:
         # put here bc stupid circular import rules
         def from_json_obj(obj: dict, gs, id) -> Fighter:
             if obj["type"] == str(Violinist):
-                return Violinist(
+                violinist = Violinist(
                     gs,
                     player_id=id,
                     health=obj["health"],
@@ -82,6 +82,11 @@ class GameState:
                         self.parse_attack_dict(attack) for attack in obj["attacks"]
                     ],
                 )
+                violinist.current_animation = obj["current_animation"]
+                violinist.current_frame = obj["current_frame"]
+                violinist.animation_time = obj["animation_time"]
+                violinist.attack_timer = obj["attack_timer"]
+                return violinist
             else:
                 raise
 

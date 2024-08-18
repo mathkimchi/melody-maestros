@@ -161,3 +161,16 @@ class Violinist(Fighter):
         self.current_animation = "ranged_attack"
         self.current_frame = 0
         self.attack_timer = 0
+        
+    def toJsonObj(self) -> dict:
+        # Start with the superclass's toJsonObj
+        obj = super().toJsonObj()
+
+        # Add the animation-specific fields
+        obj.update({
+            "current_animation": self.current_animation,
+            "current_frame": self.current_frame,
+            "animation_time": self.animation_time,
+            "attack_timer": self.attack_timer,
+        })
+        return obj
