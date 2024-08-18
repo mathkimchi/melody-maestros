@@ -15,4 +15,4 @@ if __name__ == "__main__":  # if this is the file being run
     #     port = int(port)
 
     # Client(("0.0.0.0", 8080)).run()
-    Client(("0.tcp.jp.ngrok.io", 15017)).run()
+    Client(("6.tcp.ngrok.io", 10310)).run()
