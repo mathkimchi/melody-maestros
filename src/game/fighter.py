@@ -72,11 +72,11 @@ class Fighter(ABC):
                 if collision_direction.x > 0:
                     # horizontal collision, platform is to the right, need to move player to the left st player right = other left
                     # player x + player width = other x
-                    self.collider.x = other_collider.x - self.collider.width
+                    self.collider.x = other_collider.x - self.collider.width - 0.1
                     self.velocity.x = 0
                 elif collision_direction.x < 0:
                     # horizontal collision, platform is to the left, need to move player to the right st player left = other right
-                    self.collider.x = other_collider.right()
+                    self.collider.x = other_collider.right() + 0.1
                     self.velocity.x = 0
                 elif (
                     collision_direction.y > 0
@@ -120,8 +120,7 @@ class Fighter(ABC):
 
         # update "children"
         # update attacks and remove those who are finished
-        self.attacks = [
-            attack for attack in self.attacks if attack.tick(delta_time)]
+        self.attacks = [attack for attack in self.attacks if attack.tick(delta_time)]
 
         # debug
         # print(f"{delta_time=}")
