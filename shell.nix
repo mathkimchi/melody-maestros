@@ -14,6 +14,7 @@ pkgs.mkShell {
       python-pkgs.pygame
       python-pkgs.pyaudio
       python-pkgs.aubio
+      python-pkgs.urllib3
       # python-pkgs.pandas
       # python-pkgs.requests
     ]))
