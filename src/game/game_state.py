@@ -56,7 +56,7 @@ class GameState:
         # print(f"{self.players[0].toJsonObj()=}")
         # print(f"{self.toJsonObj()=}")
 
-        print(self.players)
+        # print(self.players)
 
     def draw(self, surface: pygame.Surface) -> None:
         """Does NOT update surface"""
@@ -72,7 +72,11 @@ class GameState:
 
     def toJsonObj(self) -> dict[str, object]:
         return {
-            "players": {id: player.toJsonObj() for id, player in self.players.items() if player.health > 0},
+            "players": {
+                id: player.toJsonObj()
+                for id, player in self.players.items()
+                if player.health > 0
+            },
             "platforms": [platform.toJsonObj() for platform in self.platforms],
         }
 
