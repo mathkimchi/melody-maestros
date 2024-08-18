@@ -23,10 +23,19 @@ class Violinist(Fighter):
 
         self.idle_image_path = os.path.join("assets", "violinist/violinist-idle.png")
         self.fast_attack_image_path = os.path.join(
-            "assets", "violinist/violinist-attack.png"
+            "assets", "violinist/violinist-fast-attack.png"
         )
         self.ranged_attack_image_path = os.path.join(
             "assets", "violinist/violinist-ranged.png"
+        )
+        self.strong_attack_image_path = os.path.join(
+            "assets", "violinist/violinist-strong-attack.png"
+        )
+        self.fall_attack_image_path = os.path.join(
+            "assets", "violinist/violinist-fall-attack.png"
+        )
+        self.jump_attack_image_path = os.path.join(
+            "assets", "violinist/violinist-jump-attack.png"
         )
 
         self.sprites_loaded = False
@@ -35,6 +44,9 @@ class Violinist(Fighter):
         self.idle_frames = self.load_frames(self.idle_image_path)
         self.fast_attack_frames = self.load_frames(self.fast_attack_image_path)
         self.ranged_attack_frames = self.load_frames(self.ranged_attack_image_path)
+        self.strong_attack_frames = self.load_frames(self.strong_attack_image_path)
+        self.fall_attack_frames = self.load_frames(self.fall_attack_image_path)
+        self.jump_attack_frames = self.load_frames(self.jump_attack_image_path)
         self.sprites_loaded = True
 
     def load_frames(self, path):
@@ -62,7 +74,7 @@ class Violinist(Fighter):
 
         self.animation_time += delta_time
 
-        if self.current_animation in ["attack", "ranged_attack"]:
+        if self.current_animation != "idle":
             self.attack_timer += delta_time
             if self.attack_timer >= self.attack_duration:
                 self.current_animation = "idle"
@@ -71,12 +83,12 @@ class Violinist(Fighter):
             else:
                 frames = (
                     self.fast_attack_frames
-                    if self.current_animation == "attack"
+                    if self.current_animation == "fast-attack"
                     else self.ranged_attack_frames
                 )
                 speed = (
                     self.fast_attack_speed
-                    if self.current_animation == "attack"
+                    if self.current_animation == "fast-attack"
                     else self.ranged_attack_speed
                 )
                 if self.animation_time >= speed and frames:
@@ -92,13 +104,25 @@ class Violinist(Fighter):
 
         if self.current_animation == "idle" and self.idle_frames:
             current_frame = self.idle_frames[self.current_frame % len(self.idle_frames)]
-        elif self.current_animation == "attack" and self.fast_attack_frames:
+        elif self.current_animation == "fast-attack" and self.fast_attack_frames:
             current_frame = self.fast_attack_frames[
                 self.current_frame % len(self.fast_attack_frames)
             ]
         elif self.current_animation == "ranged_attack" and self.ranged_attack_frames:
             current_frame = self.ranged_attack_frames[
                 self.current_frame % len(self.ranged_attack_frames)
+            ]
+        elif self.current_animation == "strong-attack" and self.strong_attack_frames:
+            current_frame = self.strong_attack_frames[
+                self.current_frame % len(self.strong_attack_frames)
+            ]
+        elif self.current_animation == "fall-attack" and self.fall_attack_frames:
+            current_frame = self.fall_attack_frames[
+                self.current_frame % len(self.fall_attack_frames)
+            ]
+        elif self.current_animation == "jump-attack" and self.jump_attack_frames:
+            current_frame = self.jump_attack_frames[
+                self.current_frame % len(self.jump_attack_frames)
             ]
         else:
             # Fallback to first idle frame if no valid frame is found
@@ -148,12 +172,13 @@ class Violinist(Fighter):
             case Combo.RANGED_ATTACK:
                 self.ranged_attack()
             case Combo.STRONG_ATTACK:
+                # this one doesn't work for some reason
                 self.attacks.append(
                     Attack(
-                        self.collider, damage=10, duration=0.1, direction=self.direction
+                        self.collider, damage=10, duration=0.2, direction=self.direction
                     )
                 )
-                self.current_animation = "attack"
+                self.current_animation = "strong-attack"
                 self.current_frame = 0
                 self.attack_timer = 0
             case Combo.FALL_ATTACK:
@@ -172,7 +197,7 @@ class Violinist(Fighter):
                             ),
                         )
                     )
-                    self.current_animation = "attack"
+                    self.current_animation = "fall-attack"
                     self.current_frame = 0
                     self.attack_timer = 0
                     self.velocity.y += 100
@@ -192,7 +217,7 @@ class Violinist(Fighter):
                             ),
                         )
                     )
-                    self.current_animation = "attack"
+                    self.current_animation = "jump-attack"
                     self.current_frame = 0
                     self.attack_timer = 0
                     self.jump()
@@ -205,7 +230,7 @@ class Violinist(Fighter):
         self.attacks.append(
             Attack(self.collider, damage=5, duration=0.1, direction=self.direction)
         )
-        self.current_animation = "attack"
+        self.current_animation = "fast-attack"
         self.current_frame = 0
         self.attack_timer = 0
 

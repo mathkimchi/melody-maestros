@@ -4,7 +4,7 @@ import os
 import dataclasses
 
 
-DRAW_DBG_RECT = True
+DRAW_DBG_RECT = False
 
 
 class Attack:
