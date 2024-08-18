@@ -8,7 +8,7 @@ from dataclasses import asdict
 from .socket_input_stream import SocketInputStream
 from sound_input.sound_events import SoundEventQueue
 
-ALLOW_KEYBOARD_ATTACKS = False
+ALLOW_KEYBOARD_ATTACKS = True
 PLAY_MUSIC = True
 
 
