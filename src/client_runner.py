@@ -3,6 +3,7 @@ Runs just the client.
 """
 
 from net.client import Client
+import urllib3
 
 if __name__ == "__main__":  # if this is the file being run
     # addr = input("Server IP: ")
@@ -15,4 +16,16 @@ if __name__ == "__main__":  # if this is the file being run
     #     port = int(port)
 
     # Client(("0.0.0.0", 8080)).run()
-    Client(("6.tcp.ngrok.io", 10310)).run()
+    http = urllib3.PoolManager()
+    response = http.request(
+        "GET",
+        "https://raw.githubusercontent.com/mathkimchi/melody-maestros/master/server_url.txt"
+    )
+    data = response.data.decode("utf-8")
+    data = data.split("\n")
+    url = data[0]
+    port = int(data[1])
+
+    print(f"connect to server: {url}:{port}")
+
+    Client((url, int(port))).run()
