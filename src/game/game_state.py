@@ -48,12 +48,16 @@ class GameState:
         # print(f"{self.players[0].toJsonObj()=}")
         # print(f"{self.toJsonObj()=}")
 
+        self.check_game_over()
+
     def draw(self, surface: pygame.Surface) -> None:
         """Does NOT update surface"""
 
         # draw "children"
         # draw the player as a rectangle
         for player in self.players.values():
+            if player.health <= 0:
+                continue
             player.draw(surface=surface)
         for platform in self.platforms:
             platform.draw(surface=surface)

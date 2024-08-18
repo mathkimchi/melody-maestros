@@ -120,7 +120,8 @@ class Fighter(ABC):
 
         # update "children"
         # update attacks and remove those who are finished
-        self.attacks = [attack for attack in self.attacks if attack.tick(delta_time)]
+        self.attacks = [
+            attack for attack in self.attacks if attack.tick(delta_time)]
 
         # debug
         # print(f"{delta_time=}")
