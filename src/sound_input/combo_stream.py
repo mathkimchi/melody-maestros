@@ -47,14 +47,16 @@ class ComboStream:
         )
 
         self.tolerance = 0.8
-        self.pitch_o = aubio.pitch("default", 8192, MIC_BUFFER_SIZE, MIC_SAMPLE_RATE)  # type: ignore
+        self.pitch_o = aubio.pitch(
+            "default", 8192, MIC_BUFFER_SIZE, MIC_SAMPLE_RATE)  # type: ignore
         self.pitch_o.set_unit("midi")
         self.pitch_o.set_tolerance(self.tolerance)
 
     def get_combo_id(self) -> Combo:
         notes = collections.deque([0 for _ in range(200)])
         while True:
-            audiobuffer = self.stream.read(MIC_BUFFER_SIZE, exception_on_overflow=False)
+            audiobuffer = self.stream.read(
+                MIC_BUFFER_SIZE, exception_on_overflow=False)
             signal = np.frombuffer(audiobuffer, dtype=np.float32)
             cur_pitch = find_note(self.pitch_o(signal)[0])
 
@@ -64,8 +66,8 @@ class ComboStream:
                 notes.append(cur_pitch.value)
             notes.popleft()
 
-            print(f"{notes=}")
-            print(f"{get_held_notes(list(notes))=}")
+            # print(f"{notes=}")
+            # print(f"{get_held_notes(list(notes))=}")
 
             combo = find_matching_combo(notes)
             if combo != None:
