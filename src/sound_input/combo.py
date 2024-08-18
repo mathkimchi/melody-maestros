@@ -55,20 +55,20 @@ class Combo(enum.Enum):
     def get_notes(self) -> list[int]:
         match self:
             case Combo.FAST_ATTACK:
-                return [Tone.C3.value, Tone.B2.value]
+                return [Tone.C3.value]
             case Combo.RANGED_ATTACK:
-                return [Tone.E3.value, Tone.F3.value, Tone.G3.value]
+                return [Tone.E3.value, Tone.G3.value, Tone.B2.value]
             case Combo.STRONG_ATTACK:
-                return [Tone.C3.value, Tone.GA2.value, Tone.A2.value]
+                return [Tone.G3.value, Tone.E3.value, Tone.G3.value]
             case Combo.FALL_ATTACK:
-                return [Tone.G3.value, Tone.E3.value, Tone.C3.value]
+                return [Tone.G3.value, Tone.F3.value, Tone.E3.value]
             case Combo.JUMP_ATTACK:
-                return [Tone.C3.value, Tone.E3.value, Tone.G3.value]
+                return [Tone.E3.value, Tone.F3.value, Tone.G3.value]
             case Combo.BLOCK:
                 return [Tone.G2.value]
 
 
-MIN_HOLD_LEN = 5
+MIN_HOLD_LEN = 3
 BREAK_LEN = 20
 
 

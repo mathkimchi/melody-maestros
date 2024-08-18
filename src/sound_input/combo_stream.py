@@ -64,8 +64,8 @@ class ComboStream:
                 notes.append(cur_pitch.value)
             notes.popleft()
 
-            # print(f"{notes=}")
-            # print(f"{get_held_notes(list(notes))=}")
+            print(f"{notes=}")
+            print(f"{get_held_notes(list(notes))=}")
 
             combo = find_matching_combo(notes)
             if combo != None:

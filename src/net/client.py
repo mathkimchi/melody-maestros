@@ -41,7 +41,7 @@ class Client:
             # trim bc musescore exports with an end pause, theoretically exact but is still weird
             music_raw = music.get_raw()
             music_raw = music_raw[
-                : int((len(music_raw) / music.get_length()) * 60 / 170 * 7 * 4)
+                : int((len(music_raw) / music.get_length()) * 60 / 170 * 8 * 4)
             ]
             music = pygame.mixer.Sound(music_raw)
             music.play(-1)
