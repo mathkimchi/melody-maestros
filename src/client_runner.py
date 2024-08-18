@@ -36,5 +36,5 @@ if __name__ == "__main__":  # if this is the file being run
 
     print(f"connect to server: {url}:{port}")
 
-    # Client((url, int(port))).run()
-    Client(("6.tcp.ngrok.io", 13536)).run()
+    Client((url, int(port))).run()
+    # Client(("6.tcp.ngrok.io", 13536)).run()
