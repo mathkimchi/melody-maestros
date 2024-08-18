@@ -1,2 +1,9 @@
 # Melody Maestros
 
+Moves:
+- FAST_ATTACK: C3
+- RANGED_ATTACK: E3, G3, B2
+- STRONG_ATTACK: G3, E3, G3
+- FALL_ATTACK: G3, F3, E3
+- JUMP_ATTACK: E3, F3, G3
+- BLOCK: G2
