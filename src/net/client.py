@@ -11,7 +11,7 @@ from sound_input.sound_events import SoundEventQueue
 from sound_input.combo import Combo
 
 ALLOW_KEYBOARD_ATTACKS = True
-PLAY_MUSIC = True
+PLAY_MUSIC = False
 
 
 class Client:
